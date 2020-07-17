@@ -1,4 +1,8 @@
-# kibiter
+# Kibitzer
+
+Web cards game for playing "Warlords and Scumbags" and other games.
+
+Kibitzer is made with svelte and libwebsockets
 
 ## User interface
 
@@ -16,8 +20,6 @@ npm run dev
 ```
 
 Navigate to [localhost:5000](http://localhost:5000). You should see kibitzer running. Edit a component file in `src`, save it, and reload the page to see your changes.
-
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
 
 ## Building and running in production mode
 
