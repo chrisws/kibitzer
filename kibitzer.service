@@ -1,0 +1,15 @@
+[Unit]
+Description=KServer service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=chrisws
+WorkingDirectory=/home/chrisws/cards
+ExecStart=/home/chrisws/cards/server/k_server
+
+[Install]
+WantedBy=multi-user.target

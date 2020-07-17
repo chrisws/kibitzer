@@ -1,0 +1,6 @@
+version 1.4
+	- fix pick up from other sorts the hand
+	- fix case sensitive change nic
+	- fix turn skip bug
+	- added timeout to skip turn
+	- added deal icon
