@@ -4,6 +4,9 @@ Web cards game for playing "Warlords and Scumbags" and other games.
 
 Kibitzer is made with svelte and libwebsockets
 
+![kibitzer](https://user-images.githubusercontent.com/785121/87738018-c7367e00-c81f-11ea-87e2-50e8feb7cd66.png)
+
+
 ## User interface
 
 Install the dependencies...
