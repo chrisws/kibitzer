@@ -1,0 +1,102 @@
+package com.kibitzer.mobile.game
+
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class WarlordsRulesTest {
+
+    private val rules = WarlordsRules()
+
+    @Test
+    fun `name is correct`() {
+        assertEquals("Warlords and Scumbags", rules.name())
+    }
+
+    @Test
+    fun `handSize divides 52 by players`() {
+        assertEquals(26, rules.handSize(2))
+        assertEquals(13, rules.handSize(4))
+        assertEquals(10, rules.handSize(5))
+    }
+
+    @Test
+    fun `canPlay with empty hand is false`() {
+        val deck = Deck()
+        deck.shuffle()
+        val hand = Hand()
+        assertFalse(rules.canPlay(deck, hand))
+    }
+
+    @Test
+    fun `canPlay with 2C is always true`() {
+        val deck = Deck()
+        deck.shuffle()
+        val hand = Hand()
+        hand.add(Card.TWO_CLUBS)
+        assertTrue(rules.canPlay(deck, hand))
+    }
+
+    @Test
+    fun `canPlay with empty discard is true`() {
+        val deck = Deck()
+        deck.shuffle()
+        val hand = Hand()
+        hand.add(Card.ACE_SPADES)
+        assertTrue(rules.canPlay(deck, hand))
+    }
+
+    @Test
+    fun `canPlay requires higher rank than last play`() {
+        val deck = Deck()
+        deck.shuffle()
+        val played = Hand()
+        played.add(Card.ACE_SPADES)
+        deck.putdown(played)
+
+        val hand = Hand()
+        hand.add(Card.TWO_CLUBS)
+        // 2C is always playable
+        assertTrue(rules.canPlay(deck, hand))
+
+        val hand2 = Hand()
+        hand2.add(Card.THREE_CLUBS)
+        // 3 is lower than A in rank32 (A=11, 3=0)
+        assertFalse(rules.canPlay(deck, hand2))
+    }
+
+    @Test
+    fun `clearDiscard on 3C`() {
+        val hand = Hand()
+        hand.add(Card.THREE_CLUBS)
+        assertTrue(rules.clearDiscard(hand))
+    }
+
+    @Test
+    fun `clearDiscard on 4 cards`() {
+        val hand = Hand()
+        hand.add(Card.FOUR_CLUBS)
+        hand.add(Card.FIVE_CLUBS)
+        hand.add(Card.SIX_CLUBS)
+        hand.add(Card.SEVEN_CLUBS)
+        assertTrue(rules.clearDiscard(hand))
+    }
+
+    @Test
+    fun `noPlayTakesDiscard is true`() {
+        assertTrue(rules.noPlayTakesDiscard())
+    }
+
+    @Test
+    fun `faceDown is false`() {
+        assertFalse(rules.faceDown())
+    }
+
+    @Test
+    fun `isWinningPlay when hand is empty`() {
+        val deck = Deck()
+        val hand = Hand()
+        assertTrue(rules.isWinningPlay(deck, hand))
+    }
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kibitzer</string>
+    <string name="service_notification_channel">Kibitzer Service</string>
+    <string name="service_running">Kibitzer running</string>
+    <string name="host_waiting">Kibitzer host — waiting for players</string>
+    <string name="home_title">Kibitzer</string>
+    <string name="home_subtitle">Card games over Bluetooth</string>
+    <string name="btn_play">Play</string>
+    <string name="btn_help">Help</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_send">Send</string>
+    <string name="btn_pickup">Pick Up</string>
+    <string name="btn_skip">Skip</string>
+    <string name="btn_deal">Deal</string>
+    <string name="btn_shuffle">Shuffle</string>
+    <string name="btn_start">Start Game</string>
+    <string name="btn_play_again">Play Again</string>
+    <string name="btn_home">Home</string>
+    <string name="lobby_title">Lobby</string>
+    <string name="nickname_label">Nickname</string>
+    <string name="game_label">Game</string>
+    <string name="players_label">Players</string>
+    <string name="your_turn">Your turn!</string>
+    <string name="waiting">Waiting...</string>
+    <string name="game_over">Game Over</string>
+    <string name="help_title">Help</string>
+    <string name="connection_help">Connection Help</string>
+    <string name="game_rules">Game Rules</string>
+    <string name="about">About</string>
+    <string name="chat_placeholder">Chat...</string>
+    <string name="discard_label">Discard</string>
+</resources>
