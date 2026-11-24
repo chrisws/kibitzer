@@ -31,8 +31,13 @@ hand-coded set of per-game heuristics that makes valid, strategic moves.
 | [docs/architecture.md](docs/architecture.md) | System architecture, components, data flow |
 | [docs/ble-protocol.md](docs/ble-protocol.md) | BLE GATT service design, chunking, connection mgmt |
 | [docs/message-protocol.md](docs/message-protocol.md) | Command/response protocol, JSON envelope format |
-| [docs/game-logic.md](docs/game-logic.md) | Kotlin port of cards, rules, controller |
-| [docs/ui-design.md](docs/ui-design.md) | Screens, layouts, interactions, state management |
+| [docs/game-logic.md](docs/game-logic.md) | Core types: Card, Hand, Deck, Rules, Player, Room, Controller |
+| [docs/game-logic-rules.md](docs/game-logic-rules.md) | All 6 rule classes + CheatState |
+| [docs/game-logic-handlers.md](docs/game-logic-handlers.md) | GameHandler, OldMaidHandler, GoFishHandler, Helpers |
+| [docs/game-logic-ai.md](docs/game-logic-ai.md) | AiPlayer, strategies, AI tests, C++ differences |
+| [docs/ui-design.md](docs/ui-design.md) | Screens, layouts, components, animations, accessibility |
+| [docs/ui-design-state.md](docs/ui-design-state.md) | PlayerInfo, GameState, GameViewModel, ConnectionState |
+| [docs/ui-design-help.md](docs/ui-design-help.md) | HelpScreen, game rules content, AboutScreen, navigation |
 | [docs/implementation-plan.md](docs/implementation-plan.md) | Phased build plan with milestones |
 | [docs/testing.md](docs/testing.md) | Unit, integration, and BLE testing strategy |
 
