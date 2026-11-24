@@ -71,7 +71,7 @@ class GameViewModel(
 
     fun putdown(cards: List<Card>) {
         val hand = Hand()
-        hand.addAll(cards)
+        cards.forEach { hand.add(it) }
         connection.sendCommand("putd:${hand.toJson()}")
     }
 

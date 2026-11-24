@@ -6,7 +6,7 @@ class FreeRules : Rules() {
         if (hand.size == 0) return false
         if (deck.discardSize == 0) return true
         val last = deck.lastPlay ?: return true
-        return hand.hasHigher(last, 1, rank2A)
+        return hand.hasHigher(last, 1, ::rank2A)
     }
 
     override fun canRevoke(): Boolean = true

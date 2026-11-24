@@ -11,7 +11,7 @@ import android.bluetooth.le.ScanResult
 import android.content.Context
 import android.util.Log
 
-class BleClient(private val context: Context) : BluetoothGattCallback {
+class BleClient(private val context: Context) : BluetoothGattCallback() {
 
     companion object {
         private const val TAG = "BleClient"
@@ -24,6 +24,7 @@ class BleClient(private val context: Context) : BluetoothGattCallback {
     private val pendingChunks = mutableListOf<ByteArray>()
     private var sessionId: Int = -1
     private var connectedDevice: BluetoothDevice? = null
+    private var isConnected = false
 
     var onStateUpdate: ((String) -> Unit)? = null
     var onChatUpdate: ((String) -> Unit)? = null
@@ -105,10 +106,12 @@ class BleClient(private val context: Context) : BluetoothGattCallback {
         when (newState) {
             BluetoothGatt.STATE_CONNECTED -> {
                 Log.d(TAG, "Connected, discovering services...")
+                isConnected = true
                 gatt.discoverServices()
             }
             BluetoothGatt.STATE_DISCONNECTED -> {
                 Log.d(TAG, "Disconnected")
+                isConnected = false
                 connectedDevice = null
                 pendingChunks.clear()
                 onConnectionState?.invoke(false)
@@ -223,5 +226,5 @@ class BleClient(private val context: Context) : BluetoothGattCallback {
 
     fun getSessionId(): Int = sessionId
 
-    fun isConnected(): Boolean = gatt?.state == BluetoothGatt.STATE_CONNECTED
+    fun isConnected(): Boolean = isConnected
 }

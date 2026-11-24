@@ -23,7 +23,7 @@ fun <T> List<T>.randomElement(rng: Random): T =
     this[rng.nextInt(this.size)]
 
 fun cardDisplayName(card: Card): String {
-    val rankName = when (card.name[0]) {
+    val rankName = when (card.code[0]) {
         '2' -> "Two"
         '3' -> "Three"
         '4' -> "Four"
@@ -39,7 +39,7 @@ fun cardDisplayName(card: Card): String {
         'A' -> "Ace"
         else -> "?"
     }
-    val suitName = when (card.name[1]) {
+    val suitName = when (card.code[1]) {
         'C' -> "Clubs"
         'D' -> "Diamonds"
         'H' -> "Hearts"

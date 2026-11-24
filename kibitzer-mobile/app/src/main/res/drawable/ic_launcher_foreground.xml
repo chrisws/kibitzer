@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- K letter (gold) -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M33,28 L43,28 L43,48 L67,28 L75,28 L47,54 L75,80 L67,80 L43,58 L43,80 L33,80 Z" />
+
+    <!-- Spade top-left (white) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,16 L31,28 L17,28 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M23,28 L25,28 L25,34 L23,34 Z" />
+
+    <!-- Heart top-right (red) -->
+    <path
+        android:fillColor="#FF4444"
+        android:pathData="M84,32 L77,25 Q77,18 84,20 Q91,18 91,25 Z" />
+
+    <!-- Diamond bottom-left (red) -->
+    <path
+        android:fillColor="#FF4444"
+        android:pathData="M24,76 L31,84 L24,92 L17,84 Z" />
+
+    <!-- Club bottom-right (white) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M84,78 C87.3,78 90,80.7 90,84 C90,87.3 87.3,90 84,90 C80.7,90 78,87.3 78,84 C78,80.7 80.7,78 84,78 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M83,89 L85,89 L85,95 L83,95 Z" />
+
+</vector>

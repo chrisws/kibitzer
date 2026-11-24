@@ -5,7 +5,7 @@ class GoFishHandler : GameHandler {
     override fun handlePutdown(controller: Controller, player: Player, hand: Hand): Message {
         // Go Fish: putdown is not the primary action; ask is.
         // If a player puts down a completed set of 4, discard it.
-        if (hand.size == 4 && hand.isEqual(hand.peek(), rank2A)) {
+        if (hand.size == 4 && hand.isEqual(hand.peek(), ::rank2A)) {
             player.hand.remove(hand)
             return Message("message", "${player.name()} discarded a set of 4")
         }
@@ -27,7 +27,7 @@ class GoFishHandler : GameHandler {
             ?: return Message("message", "target not found")
 
         // Find all cards of that rank in target's hand
-        val matching = target.hand.toList().filter { it.name[0] == rankChar }
+        val matching = target.hand.toList().filter { it.code[0] == rankChar }
         if (matching.isEmpty()) {
             // Go fish - draw from deck
             return Message("message", "${target.name()} says: Go fish!")
@@ -36,7 +36,7 @@ class GoFishHandler : GameHandler {
             val matchHand = Hand().apply { matching.forEach { add(it) } }
             target.hand.remove(matchHand)
             player.hand.addAll(matchHand)
-            player.hand.sort(rank2A)
+            player.hand.sort(::rank2A)
             // Check for completed sets of 4
             discardCompletedSets(player)
             return Message("message", "${target.name()} gave ${matching.size} card(s) of rank $rankChar")

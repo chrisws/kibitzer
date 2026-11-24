@@ -2,6 +2,7 @@ package com.kibitzer.mobile.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,7 +42,7 @@ fun CardView(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = card.name.take(1),
+                    text = card.code.take(1),
                     style = MaterialTheme.typography.titleMedium,
                     color = suitColor
                 )

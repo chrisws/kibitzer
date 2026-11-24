@@ -70,6 +70,15 @@ class Deck {
     fun getPackJson(): String = pack.toJson()
     fun getDiscardJson(): String = discard.toJson()
 
+    fun restoreFrom(other: Deck) {
+        pack.clear()
+        pack.addAll(other.pack)
+        discard.clear()
+        discard.addAll(other.discard)
+        lastPlay = other.lastPlay
+        lastSize = other.lastSize
+    }
+
     fun copy(): Deck {
         val d = Deck()
         d.pack.addAll(pack)

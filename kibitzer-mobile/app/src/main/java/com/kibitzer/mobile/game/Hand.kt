@@ -56,14 +56,18 @@ class Hand {
         _cards.sortWith(compareBy({ rank(it) }, { it.ordinal }))
     }
 
-    fun swap(i: Int, j: Int) { _cards.swap(i, j) }
+    fun swap(i: Int, j: Int) {
+        val temp = _cards[i]
+        _cards[i] = _cards[j]
+        _cards[j] = temp
+    }
 
     fun get(index: Int): Card = _cards[index]
 
     fun toList(): List<Card> = _cards.toList()
 
     fun toJson(): String {
-        return _cards.joinToString(", ", prefix = "[", postfix = "]") { "\"${it.name}\"" }
+        return _cards.joinToString(", ", prefix = "[", postfix = "]") { "\"${it.code}\"" }
     }
 
     companion object {
@@ -80,5 +84,5 @@ class Hand {
     }
 
     override fun toString(): String =
-        if (_cards.isEmpty()) "empty!" else _cards.joinToString(" ") { it.name }
+        if (_cards.isEmpty()) "empty!" else _cards.joinToString(" ") { it.code }
 }

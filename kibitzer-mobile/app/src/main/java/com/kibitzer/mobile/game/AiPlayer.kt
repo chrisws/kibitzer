@@ -38,7 +38,7 @@ class AiPlayer(
 
         val validPlays = findAllValidPlays(hand, deck)
         if (validPlays.isNotEmpty()) {
-            val play = validPlays.minBy { it.sumOf { c -> rank32(c) } }
+            val play = validPlays.minBy { it.toList().sumOf { c -> rank32(c) } }
             return "putd:${play.toJson()}"
         }
 
@@ -84,7 +84,7 @@ class AiPlayer(
         val validCards = hand.toList().filter { rank2A(it) > rank2A(last) }
         if (validCards.isNotEmpty()) {
             val card = validCards.minBy { rank2A(it) }
-            return "putd:[\"${card.name}\"]"
+            return "putd:[\"${card.code}\"]"
         }
 
         return "picu:1"
@@ -108,7 +108,7 @@ class AiPlayer(
         val matching = hand.toList().filter { rank2A(it) == rank2A(last) }
         if (matching.isNotEmpty()) {
             val card = matching.minBy { it.ordinal }
-            return "putd:[\"${card.name}\"]"
+            return "putd:[\"${card.code}\"]"
         }
 
         if (eights.isNotEmpty()) {
@@ -159,7 +159,7 @@ class AiPlayer(
         val myRanks = hand.toList().map { rank2A(it) }.toSet()
         if (myRanks.isEmpty()) return "picu:1"
 
-        val targetRank = myRanks.randomElement(rng)
+        val targetRank = myRanks.toList().randomElement(rng)
 
         val opponents = room2.slots
             .mapIndexed { i, sid -> i to sid }

@@ -1,6 +1,6 @@
 package com.kibitzer.mobile.game
 
-enum class Card(val name: String) {
+enum class Card(val code: String) {
     TWO_CLUBS("2C"), TWO_DIAMONDS("2D"), TWO_HEARTS("2H"), TWO_SPADES("2S"),
     THREE_CLUBS("3C"), THREE_DIAMONDS("3D"), THREE_HEARTS("3H"), THREE_SPADES("3S"),
     FOUR_CLUBS("4C"), FOUR_DIAMONDS("4D"), FOUR_HEARTS("4H"), FOUR_SPADES("4S"),
@@ -16,7 +16,7 @@ enum class Card(val name: String) {
     ACE_CLUBS("AC"), ACE_DIAMONDS("AD"), ACE_HEARTS("AH"), ACE_SPADES("AS");
 
     val rank: Int
-        get() = when (name[0]) {
+        get() = when (code[0]) {
             '2' -> 2
             '3' -> 3
             '4' -> 4
@@ -34,11 +34,11 @@ enum class Card(val name: String) {
         }
 
     val suit: Char
-        get() = name[1]
+        get() = code[1]
 
     companion object {
         fun fromName(name: String): Card? =
-            entries.find { it.name == name }
+            entries.find { it.code == name }
     }
 }
 

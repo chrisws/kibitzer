@@ -29,7 +29,7 @@ class Chunker(private val maxChunkSize: Int = GattConstants.MAX_CHUNK_PAYLOAD) {
         require(chunks.size == total) { "Expected $total chunks, got ${chunks.size}" }
 
         val sorted = chunks.sortedBy { it[2].toInt() and 0xFF }
-        val payload = sorted.flatMap { it.copyOfRange(4, it.size) }.toByteArray()
+        val payload = sorted.flatMap { it.copyOfRange(4, it.size).toList() }.toByteArray()
         return String(payload, Charsets.UTF_8)
     }
 }

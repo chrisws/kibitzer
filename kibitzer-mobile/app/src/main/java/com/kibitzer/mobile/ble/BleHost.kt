@@ -19,7 +19,7 @@ import com.kibitzer.mobile.game.Message
 class BleHost(
     private val context: Context,
     private val controller: Controller
-) : BluetoothGattServerCallback {
+) : BluetoothGattServerCallback() {
 
     companion object {
         private const val TAG = "BleHost"
@@ -40,7 +40,7 @@ class BleHost(
         val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
         adapter = manager?.adapter
         adapter?.let {
-            gattServer = it.openGattServer(context, this)
+            gattServer = BleServerHelper.openGattServer(it, context, this)
             Log.d(TAG, "GATT server started")
         }
     }
@@ -68,11 +68,11 @@ class BleHost(
             return
         }
 
-        commandChar.setProperties(BluetoothGattCharacteristic.PROPERTY_WRITE)
-        stateChar.setProperties(BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PROPERTY_NOTIFY)
-        chatChar.setProperties(BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PROPERTY_NOTIFY)
-        handshakeChar.setProperties(BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PROPERTY_NOTIFY)
-        playersChar.setProperties(BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PROPERTY_NOTIFY)
+        BleServerHelper.setProperties(commandChar, BluetoothGattCharacteristic.PROPERTY_WRITE)
+        BleServerHelper.setProperties(stateChar, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PROPERTY_NOTIFY)
+        BleServerHelper.setProperties(chatChar, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PROPERTY_NOTIFY)
+        BleServerHelper.setProperties(handshakeChar, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PROPERTY_NOTIFY)
+        BleServerHelper.setProperties(playersChar, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PROPERTY_NOTIFY)
 
         isAdvertising = true
         Log.d(TAG, "Advertising as $ADVERT_NAME")
@@ -111,7 +111,8 @@ class BleHost(
             GattConstants.CHAR_HANDSHAKE -> getHandshakeJson(sessionId)
             else -> ""
         }
-        server.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, data.toByteArray())
+        val dataBytes = data.toByteArray()
+        server.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, dataBytes.size, dataBytes)
     }
 
     override fun onCharacteristicWriteRequest(
@@ -124,10 +125,10 @@ class BleHost(
         if (characteristic.uuid == GattConstants.CHAR_COMMAND) {
             handleCommandChunk(device, value, sessionId)
         }
-        server.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, null, 0)
+        server.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
     }
 
-    override fun onExecuteWrite(device: BluetoothDevice, requestId: Int) {
+    override fun onExecuteWrite(device: BluetoothDevice, requestId: Int, prepared: Boolean) {
         // No-op for now
     }
 

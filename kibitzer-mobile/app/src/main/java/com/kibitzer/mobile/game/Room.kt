@@ -20,12 +20,7 @@ class Room(val maxSlots: Int = 6) {
 
     fun restoreState(players: List<Player>) {
         saveDeck?.let { saved ->
-            deck.pack.clear()
-            deck.pack.addAll(saved.pack)
-            deck.discard.clear()
-            deck.discard.addAll(saved.discard)
-            deck.lastPlay = saved.lastPlay
-            deck.lastSize = saved.lastSize
+            deck.restoreFrom(saved)
         }
         saveHand?.let { savedHand ->
             val player = players.find { it.sessionId == saveSessionId }

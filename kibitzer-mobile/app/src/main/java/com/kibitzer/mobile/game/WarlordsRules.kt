@@ -4,18 +4,18 @@ class WarlordsRules : Rules() {
 
     override fun canPlay(deck: Deck, hand: Hand): Boolean {
         if (hand.size == 0) return false
-        if (hand.hasEqual(Card.TWO_CLUBS, rank32)) return true
+        if (hand.hasEqual(Card.TWO_CLUBS, ::rank32)) return true
         if (deck.discardSize == 0) return true
         val last = deck.lastPlay ?: return true
         if (rank32(last) == rank32(Card.TWO_CLUBS)) return true
-        return hand.hasHigher(last, deck.lastSize, rank32)
+        return hand.hasHigher(last, deck.lastSize, ::rank32)
     }
 
     override fun canRevoke(): Boolean = false
 
     override fun clearDiscard(hand: Hand): Boolean {
-        return hand.hasEqual(Card.THREE_CLUBS, rank32)
-            || hand.hasEqual(Card.TEN_CLUBS, rank32)
+        return hand.hasEqual(Card.THREE_CLUBS, ::rank32)
+            || hand.hasEqual(Card.TEN_CLUBS, ::rank32)
             || hand.size == 4
     }
 
@@ -27,12 +27,12 @@ class WarlordsRules : Rules() {
 
     override fun isValidPlay(deck: Deck, hand: Hand): Boolean {
         if (hand.size == 0) return false
-        if (!hand.isEqual(hand.peek(), rank32)) return false
-        if (hand.hasEqual(Card.TWO_CLUBS, rank32)) return true
+        if (!hand.isEqual(hand.peek(), ::rank32)) return false
+        if (hand.hasEqual(Card.TWO_CLUBS, ::rank32)) return true
         if (deck.discardSize == 0) return true
         val last = deck.lastPlay ?: return true
         if (rank32(last) == rank32(Card.TWO_CLUBS)) return true
-        return hand.hasHigher(last, 1, rank32) && hand.size == deck.lastSize
+        return hand.hasHigher(last, 1, ::rank32) && hand.size == deck.lastSize
     }
 
     override fun isWinningPlay(deck: Deck, hand: Hand): Boolean = hand.size == 0

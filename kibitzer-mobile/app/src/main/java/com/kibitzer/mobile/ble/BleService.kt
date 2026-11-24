@@ -36,10 +36,10 @@ class BleService(private val context: Context) {
             PackageManager.PERMISSION_GRANTED
     }
 
-    fun negotiateMtu(gatt: BluetoothGatt): Int {
-        val mtu = gatt.requestMtu(GattConstants.TARGET_MTU)
-        Log.d(TAG, "MTU negotiated: $mtu")
-        return mtu
+    fun negotiateMtu(gatt: BluetoothGatt): Boolean {
+        val result = gatt.requestMtu(GattConstants.TARGET_MTU)
+        Log.d(TAG, "MTU negotiation requested: $result")
+        return result
     }
 
     fun getDeviceAddress(device: BluetoothDevice): String {
