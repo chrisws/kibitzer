@@ -15,6 +15,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kibitzer.mobile.game.AiPlayer
 import com.kibitzer.mobile.game.Game
 import com.kibitzer.mobile.model.GameViewModel
 
@@ -34,6 +36,8 @@ fun AiLobbyScreen(
     onGameStart: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+    var numAiPlayers by remember { mutableStateOf(1) }
+    var difficulty by remember { mutableStateOf(AiPlayer.Difficulty.MEDIUM) }
 
     Column(
         modifier = Modifier
@@ -46,6 +50,7 @@ fun AiLobbyScreen(
             style = MaterialTheme.typography.headlineLarge
         )
 
+        // --- Game selection ---
         Text(
             text = "Choose a game",
             style = MaterialTheme.typography.titleMedium
@@ -79,8 +84,59 @@ fun AiLobbyScreen(
             }
         }
 
+        // --- Game details ---
+        Text(
+            text = state.game.description,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
+        Text(
+            text = "Players: ${state.game.minPlayers}–${state.game.maxPlayers}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // --- AI player count ---
+        Text(
+            text = "AI Opponents: $numAiPlayers",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Slider(
+            value = numAiPlayers.toFloat(),
+            onValueChange = { numAiPlayers = it.toInt().coerceIn(1, 5) },
+            valueRange = 1f..5f,
+            steps = 3,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // --- Difficulty ---
+        Text(
+            text = "Difficulty",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AiPlayer.Difficulty.entries.forEach { d ->
+                val selected = d == difficulty
+                OutlinedButton(
+                    onClick = { difficulty = d },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = d.name,
+                        color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
+        // --- Bottom buttons ---
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -88,7 +144,13 @@ fun AiLobbyScreen(
             OutlinedButton(onClick = onBack, modifier = Modifier.weight(1f)) {
                 Text("Back")
             }
-            Button(onClick = onGameStart, modifier = Modifier.weight(2f)) {
+            Button(
+                onClick = {
+                    viewModel.startAiGame(state.game, numAiPlayers, difficulty)
+                    onGameStart()
+                },
+                modifier = Modifier.weight(2f)
+            ) {
                 Text("Start Game")
             }
         }

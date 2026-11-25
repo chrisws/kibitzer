@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kibitzer.mobile.model.PlayerInfo
 import com.kibitzer.mobile.ui.theme.TurnHighlight
@@ -45,7 +46,7 @@ fun TurnIndicator(
         Text(
             text = label,
             style = MaterialTheme.typography.labelLarge,
-            color = if (isMyTurn) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface
+            color = if (isMyTurn) Color(0xFF1A1A2E) else MaterialTheme.colorScheme.onSurface
         )
     }
 }

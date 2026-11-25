@@ -8,7 +8,28 @@ class AiPlayer(
 ) {
     enum class Difficulty { EASY, MEDIUM, HARD }
 
+    enum class Personality(val description: String) {
+        AGGRESSIVE("plays boldly, takes risks"),
+        CAUTIOUS("plays safe, avoids risks"),
+        CHATTY("talks a lot, gives hints"),
+        QUIET("barely speaks, focused"),
+        COMPETITIVE("wants to win at all costs"),
+        RELAXED("takes it easy, enjoys the game")
+    }
+
+    val name: String = NAMES.random()
+    val personality: Personality = Personality.entries.random()
+
     private val rng = Random(seed)
+
+    companion object {
+        private val NAMES = listOf(
+            "Ace", "Blaze", "Cleo", "Duke", "Echo", "Finn", "Gwen",
+            "Hank", "Iris", "Jax", "Kira", "Luna", "Milo", "Nina",
+            "Oscar", "Pip", "Quinn", "Rex", "Sage", "Tess",
+            "Umbra", "Vex", "Wren", "Xena", "Yuri", "Zara"
+        )
+    }
 
     fun decide(controller: Controller, sessionId: Int): String {
         val player = controller.findSession(sessionId)

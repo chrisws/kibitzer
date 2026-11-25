@@ -25,9 +25,9 @@ class GameViewModel(
 
     // --- Local AI mode ---
     private var controller: Controller? = null
-    private var aiPlayer: AiPlayer? = null
-    private var chatBot: ChatBot? = null
-    private var aiSessionId: Int = -1
+    private var aiPlayerList: List<AiPlayer> = emptyList()
+    private var chatBotList: List<ChatBot> = emptyList()
+    private var aiSessionIds: List<Int> = emptyList()
     private var humanSessionId: Int = -1
 
     init {
@@ -75,33 +75,52 @@ class GameViewModel(
         )
     }
 
-    fun startAiGame(game: Game, difficulty: AiPlayer.Difficulty = AiPlayer.Difficulty.MEDIUM) {
+    fun startAiGame(
+        game: Game,
+        numAiPlayers: Int = 1,
+        difficulty: AiPlayer.Difficulty = AiPlayer.Difficulty.MEDIUM
+    ) {
         val ctrl = Controller()
-        val ai = AiPlayer(difficulty = difficulty)
-        val bot = ChatBot()
+        val aiPlayers = (1..numAiPlayers).map { AiPlayer(difficulty = difficulty) }
+        val bots = (1..numAiPlayers).map { ChatBot() }
 
         controller = ctrl
-        aiPlayer = ai
-        chatBot = bot
+        aiPlayerList = aiPlayers
+        chatBotList = bots
 
         // Create sessions
         humanSessionId = ctrl.createSession()
-        aiSessionId = ctrl.createSession()
+        aiSessionIds = (1..numAiPlayers).map { ctrl.createSession() }
 
         // Set nicknames
         ctrl.handle("nicn:You", humanSessionId)
-        ctrl.handle("nicn:AI", aiSessionId)
+        aiSessionIds.forEachIndexed { i, sid ->
+            ctrl.handle("nicn:${aiPlayers[i].name}", sid)
+        }
 
         // Set game
         ctrl.setGame(game)
 
-        // Join both players
+        // Join all players
         ctrl.handle("join:0", humanSessionId)
-        ctrl.handle("join:1", aiSessionId)
+        aiSessionIds.forEachIndexed { i, sid ->
+            ctrl.handle("join:${i + 1}", sid)
+        }
 
         // Shuffle and deal
         ctrl.handle("shuf:", humanSessionId)
         val dealMsg = ctrl.handle("deal:", humanSessionId)
+
+        // Build player list with hand sizes
+        val playerList = mutableListOf(
+            PlayerInfo(humanSessionId, "You", true, false, 0, 0)
+        )
+        aiSessionIds.forEachIndexed { i, sid ->
+            val ctrlPlayer = ctrl.findSession(sid)
+            playerList.add(
+                PlayerInfo(sid, aiPlayers[i].name, true, true, ctrlPlayer?.hand?.size ?: 0, 0)
+            )
+        }
 
         // Update state
         _state.value = _state.value.copy(
@@ -110,27 +129,24 @@ class GameViewModel(
             mySessionId = humanSessionId,
             connectionState = ConnectionState.CONNECTED,
             screen = Screen.GAME,
-            players = listOf(
-                PlayerInfo(humanSessionId, "You", true, false, 0, 0),
-                PlayerInfo(aiSessionId, "AI", true, true, 0, 0)
-            ),
-            chatLog = listOf(bot.greet())
+            players = playerList,
+            chatLog = listOf("${aiPlayers[0].name}: ${bots[0].greet()}")
         )
 
         // Sync state from controller
         syncStateFromController(dealMsg)
 
-        // If it's AI's turn, let it play
-        if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+        // If it's an AI's turn, let it play
+        if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
             aiTurn()
         }
     }
 
     fun stopAiGame() {
         controller = null
-        aiPlayer = null
-        chatBot = null
-        aiSessionId = -1
+        aiPlayerList = emptyList()
+        chatBotList = emptyList()
+        aiSessionIds = emptyList()
         humanSessionId = -1
         _state.value = _state.value.copy(
             gameMode = GameMode.BLE,
@@ -180,7 +196,7 @@ class GameViewModel(
             val ctrl = controller ?: return
             val msg = ctrl.handle("deal:", humanSessionId)
             syncStateFromController(msg)
-            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
             }
         } else {
@@ -193,7 +209,7 @@ class GameViewModel(
             val ctrl = controller ?: return
             val msg = ctrl.handle("picu:$count", humanSessionId)
             syncStateFromController(msg)
-            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
             }
         } else {
@@ -208,7 +224,7 @@ class GameViewModel(
             val ctrl = controller ?: return
             val msg = ctrl.handle("putd:${hand.toJson()}", humanSessionId)
             syncStateFromController(msg)
-            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
             }
         } else {
@@ -221,7 +237,7 @@ class GameViewModel(
             val ctrl = controller ?: return
             val msg = ctrl.handle("skip:", humanSessionId)
             syncStateFromController(msg)
-            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
             }
         } else {
@@ -231,10 +247,15 @@ class GameViewModel(
 
     fun chat(text: String) {
         if (_state.value.gameMode == GameMode.AI) {
-            _state.value = _state.value.copy(chatLog = _state.value.chatLog + text)
-            val bot = chatBot ?: return
-            val response = bot.respond(text)
-            _state.value = _state.value.copy(chatLog = _state.value.chatLog + "AI: $response")
+            _state.value = _state.value.copy(chatLog = _state.value.chatLog + "You: $text")
+            aiSessionIds.forEachIndexed { i, sid ->
+                val bot = chatBotList[i]
+                val aiName = aiPlayerList[i].name
+                val response = bot.respond(text)
+                _state.value = _state.value.copy(
+                    chatLog = _state.value.chatLog + "$aiName: $response"
+                )
+            }
         } else {
             connection.sendCommand("chat:$text")
         }
@@ -245,7 +266,7 @@ class GameViewModel(
             val ctrl = controller ?: return
             val msg = ctrl.handle("bid:$count", humanSessionId)
             syncStateFromController(msg)
-            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
             }
         } else {
@@ -258,7 +279,7 @@ class GameViewModel(
             val ctrl = controller ?: return
             val msg = ctrl.handle("cheat:$targetId", humanSessionId)
             syncStateFromController(msg)
-            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
             }
         } else {
@@ -271,7 +292,7 @@ class GameViewModel(
             val ctrl = controller ?: return
             val msg = ctrl.handle("ask:$data", humanSessionId)
             syncStateFromController(msg)
-            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
             }
         } else {
@@ -295,14 +316,17 @@ class GameViewModel(
 
     private fun aiTurn() {
         val ctrl = controller ?: return
-        val ai = aiPlayer ?: return
+        val currentTurn = _state.value.currentTurn
+        val aiIndex = aiSessionIds.indexOf(currentTurn)
+        if (aiIndex == -1) return
 
-        val command = ai.decide(ctrl, aiSessionId)
-        val msg = ctrl.handle(command, aiSessionId)
+        val ai = aiPlayerList[aiIndex]
+        val command = ai.decide(ctrl, currentTurn)
+        val msg = ctrl.handle(command, currentTurn)
         syncStateFromController(msg)
 
-        // If AI needs to play again (e.g., after a skip), recurse
-        if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+        // If another AI needs to play, recurse
+        if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
             aiTurn()
         }
     }
@@ -315,10 +339,22 @@ class GameViewModel(
         val newHand = parseCardList(obj, "hand")
         val newPile = parseCardList(obj, "pile")
         val turn = obj.get("turn")?.asInt ?: -1
-        val message = obj.get("message")?.asString ?: ""
+        val rawMessage = obj.get("message")?.asString ?: ""
+        val message = if (rawMessage == "cards dealt") "" else rawMessage
         val faceDown = obj.get("faceDown")?.asBoolean ?: false
         val gameName = obj.get("game")?.asString
         val game = gameName?.let { Game.fromName(it) } ?: _state.value.game
+
+        // Update player hand sizes from controller
+        val ctrl = controller
+        val updatedPlayers = _state.value.players.map { p ->
+            if (ctrl != null) {
+                val ctrlPlayer = ctrl.findSession(p.sessionId)
+                if (ctrlPlayer != null) {
+                    p.copy(handSize = ctrlPlayer.hand.size)
+                } else p
+            } else p
+        }
 
         _state.value = _state.value.copy(
             myHand = newHand,
@@ -327,6 +363,7 @@ class GameViewModel(
             message = message,
             faceDown = faceDown,
             game = game,
+            players = updatedPlayers,
             isGameOver = newHand.isEmpty() && turn == -1
         )
     }
@@ -410,8 +447,11 @@ class GameViewModel(
         if (!arr.isJsonArray) return emptyList()
         return arr.asJsonArray.mapNotNull { elem ->
             try {
-                val cardObj = elem.asJsonObject
-                val name = cardObj.get("name")?.asString
+                val name = if (elem.isJsonPrimitive) {
+                    elem.asString
+                } else {
+                    elem.asJsonObject.get("name")?.asString
+                }
                 if (name != null) Card.valueOf(name) else null
             } catch (e: Exception) {
                 null
