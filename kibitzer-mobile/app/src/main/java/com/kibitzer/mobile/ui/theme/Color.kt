@@ -18,5 +18,5 @@ val PlayerInactive = Color(0xFF757575)
 
 val DarkBackground = Color(0xFF1A1A2E)
 val DarkSurface = Color(0xFF16213E)
-val DarkPrimary = Color(0xFF0F3460)
+val DarkPrimary = Color(0xFF4FC3F7)
 val DarkAccent = Color(0xFFE94560)

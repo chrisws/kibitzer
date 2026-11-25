@@ -6,7 +6,7 @@ class Chunker(private val maxChunkSize: Int = GattConstants.MAX_CHUNK_PAYLOAD) {
 
     fun split(message: String): List<ByteArray> {
         val payload = message.toByteArray(Charsets.UTF_8)
-        val totalChunks = (payload.size + maxChunkSize - 1) / maxChunkSize
+        val totalChunks = maxOf(1, (payload.size + maxChunkSize - 1) / maxChunkSize)
         val chunks = mutableListOf<ByteArray>()
 
         for (i in 0 until totalChunks) {

@@ -75,10 +75,12 @@ class AiPlayer(
         val hand = player.hand
         val deck = room.deck
 
+        if (hand.size == 0) return "skip:"
+
         val last = deck.lastPlay
         if (last == null) {
             val lowest = hand.toList().minBy { rank2A(it) }
-            return "putd:[\"${lowest.name}\"]"
+            return "putd:[\"${lowest.code}\"]"
         }
 
         val validCards = hand.toList().filter { rank2A(it) > rank2A(last) }

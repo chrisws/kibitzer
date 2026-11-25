@@ -14,10 +14,10 @@ class AiVsAiTest {
 
         val id1 = controller.createSession()
         val id2 = controller.createSession()
-        controller.handle("join:0", id1.toString())
-        controller.handle("join:1", id2.toString())
-        controller.handle("shuf:", id1.toString())
-        controller.handle("deal:", id1.toString())
+        controller.handle("join:0", id1)
+        controller.handle("join:1", id2)
+        controller.handle("shuf:", id1)
+        controller.handle("deal:", id1)
 
         var turns = 0
         var lastMsg: Message? = null
@@ -41,10 +41,10 @@ class AiVsAiTest {
 
         val id1 = controller.createSession()
         val id2 = controller.createSession()
-        controller.handle("join:0", id1.toString())
-        controller.handle("join:1", id2.toString())
-        controller.handle("shuf:", id1.toString())
-        controller.handle("deal:", id1.toString())
+        controller.handle("join:0", id1)
+        controller.handle("join:1", id2)
+        controller.handle("shuf:", id1)
+        controller.handle("deal:", id1)
 
         var turns = 0
         while (turns < 20 && !controller.isGameOver()) {
@@ -66,10 +66,10 @@ class AiVsAiTest {
 
         val id1 = controller.createSession()
         val id2 = controller.createSession()
-        controller.handle("join:0", id1.toString())
-        controller.handle("join:1", id2.toString())
-        controller.handle("shuf:", id1.toString())
-        controller.handle("deal:", id1.toString())
+        controller.handle("join:0", id1)
+        controller.handle("join:1", id2)
+        controller.handle("shuf:", id1)
+        controller.handle("deal:", id1)
 
         var turns = 0
         while (turns < 20 && !controller.isGameOver()) {
@@ -88,9 +88,9 @@ class AiVsAiTest {
         val ai = AiPlayer(seed = 5L)
 
         val id = controller.createSession()
-        controller.handle("join:0", id.toString())
-        controller.handle("shuf:", id.toString())
-        controller.handle("deal:", id.toString())
+        controller.handle("join:0", id)
+        controller.handle("shuf:", id)
+        controller.handle("deal:", id)
 
         // Simulate empty hand
         controller.findSession(id)!!.hand.clear()

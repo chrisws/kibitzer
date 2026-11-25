@@ -12,6 +12,11 @@ data class PlayerInfo(
     val points: Int = 0
 )
 
+data class DiscoveredGame(
+    val address: String,
+    val name: String = ""
+)
+
 enum class CheatPhase {
     BIDDING,
     PLAYING,
@@ -22,6 +27,7 @@ enum class CheatPhase {
 enum class Screen {
     HOME,
     LOBBY,
+    AI_LOBBY,
     GAME,
     GAME_OVER,
     HELP,
@@ -30,9 +36,15 @@ enum class Screen {
     ABOUT
 }
 
+enum class GameMode {
+    BLE,
+    AI
+}
+
 data class GameState(
     val screen: Screen = Screen.HOME,
     val game: Game = Game.WARLORDS,
+    val gameMode: GameMode = GameMode.BLE,
     val players: List<PlayerInfo> = emptyList(),
     val mySessionId: Int = -1,
     val myHand: List<Card> = emptyList(),
@@ -45,7 +57,8 @@ data class GameState(
     val cheatPhase: CheatPhase = CheatPhase.BIDDING,
     val activeSuit: Char? = null,
     val connectionState: ConnectionState = ConnectionState.DISCONNECTED,
-    val chatLog: List<String> = emptyList()
+    val chatLog: List<String> = emptyList(),
+    val discoveredGames: List<DiscoveredGame> = emptyList()
 ) {
     val myTurn: Boolean
         get() = currentTurn == mySessionId

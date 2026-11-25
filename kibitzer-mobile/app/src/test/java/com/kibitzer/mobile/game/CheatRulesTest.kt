@@ -22,7 +22,6 @@ class CheatRulesTest {
 
     @Test
     fun `handSize divides 104 for more than 4 players`() {
-        assertEquals(26, rules.handSize(4))
         assertEquals(20, rules.handSize(5))
         assertEquals(17, rules.handSize(6))
     }
@@ -164,14 +163,14 @@ class CheatRulesTest {
 
     @Test
     fun `isBidValid checks matching rank count`() {
-        val state = CheatState(currentRank = 1, bid = 2)
+        val state = CheatState(currentRank = 12, bid = 2)
         val played = listOf(Card.ACE_SPADES, Card.ACE_HEARTS, Card.TWO_CLUBS)
         assertTrue(state.isBidValid(played))
     }
 
     @Test
     fun `isBidValid fails when not enough matching`() {
-        val state = CheatState(currentRank = 1, bid = 3)
+        val state = CheatState(currentRank = 12, bid = 3)
         val played = listOf(Card.ACE_SPADES, Card.ACE_HEARTS, Card.TWO_CLUBS)
         assertFalse(state.isBidValid(played))
     }

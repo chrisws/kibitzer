@@ -74,6 +74,9 @@
     "enabled": false,
     "port": 8080
   },
+  "tools": {
+    "adb": "/usr/bin/adb"
+  },
   "extra_dirs": [
     "/home/chrisws/models"
   ],

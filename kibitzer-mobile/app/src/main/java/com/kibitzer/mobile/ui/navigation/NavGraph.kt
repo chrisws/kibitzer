@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.kibitzer.mobile.model.GameViewModel
 import com.kibitzer.mobile.model.Screen
 import com.kibitzer.mobile.ui.screens.AboutScreen
+import com.kibitzer.mobile.ui.screens.AiLobbyScreen
 import com.kibitzer.mobile.ui.screens.ConnectionHelpScreen
 import com.kibitzer.mobile.ui.screens.GameOverScreen
 import com.kibitzer.mobile.ui.screens.GameRulesScreen
@@ -23,6 +24,7 @@ import com.kibitzer.mobile.ui.screens.LobbyScreen
 object Routes {
     const val HOME = "home"
     const val LOBBY = "lobby"
+    const val AI_LOBBY = "ai_lobby"
     const val GAME = "game"
     const val GAME_OVER = "game_over"
     const val HELP = "help"
@@ -42,8 +44,16 @@ fun NavGraph(viewModel: GameViewModel) {
     ) {
         composable(Routes.HOME) {
             HomeScreen(
-                onPlay = { navController.navigate(Routes.LOBBY) },
+                onPlayWithFriends = { navController.navigate(Routes.LOBBY) },
+                onPlayWithAi = { navController.navigate(Routes.AI_LOBBY) },
                 onHelp = { navController.navigate(Routes.HELP) }
+            )
+        }
+        composable(Routes.AI_LOBBY) {
+            AiLobbyScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onGameStart = { navController.navigate(Routes.GAME) }
             )
         }
         composable(Routes.LOBBY) {

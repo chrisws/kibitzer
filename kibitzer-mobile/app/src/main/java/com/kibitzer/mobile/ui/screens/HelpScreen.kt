@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -33,19 +34,19 @@ fun HelpScreen(
             style = MaterialTheme.typography.displayLarge
         )
         Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onConnectionHelp) {
+        Button(onClick = onConnectionHelp, modifier = Modifier.fillMaxWidth()) {
             Text("Connection Help")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onGameRules) {
+        Button(onClick = onGameRules, modifier = Modifier.fillMaxWidth()) {
             Text("Game Rules")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onAbout) {
+        Button(onClick = onAbout, modifier = Modifier.fillMaxWidth()) {
             Text("About")
         }
         Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onBack) {
+        Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
             Text("Back")
         }
     }

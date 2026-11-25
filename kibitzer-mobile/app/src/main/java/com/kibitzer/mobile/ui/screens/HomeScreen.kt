@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -16,7 +17,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HomeScreen(
-    onPlay: () -> Unit,
+    onPlayWithFriends: () -> Unit,
+    onPlayWithAi: () -> Unit,
     onHelp: () -> Unit
 ) {
     Column(
@@ -36,11 +38,15 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(48.dp))
-        Button(onClick = onPlay) {
-            Text("Play")
+        Button(onClick = onPlayWithFriends, modifier = Modifier.fillMaxWidth()) {
+            Text("Play with Friends")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onHelp) {
+        Button(onClick = onPlayWithAi, modifier = Modifier.fillMaxWidth()) {
+            Text("Play with AI")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onHelp, modifier = Modifier.fillMaxWidth()) {
             Text("Help")
         }
     }

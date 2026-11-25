@@ -1,7 +1,10 @@
 package com.kibitzer.mobile.model
 
 import androidx.lifecycle.ViewModel
+import com.kibitzer.mobile.game.AiPlayer
 import com.kibitzer.mobile.game.Card
+import com.kibitzer.mobile.game.ChatBot
+import com.kibitzer.mobile.game.Controller
 import com.kibitzer.mobile.game.Game
 import com.kibitzer.mobile.game.Hand
 import com.kibitzer.mobile.game.Message
@@ -20,6 +23,13 @@ class GameViewModel(
 
     private val gson = Gson()
 
+    // --- Local AI mode ---
+    private var controller: Controller? = null
+    private var aiPlayer: AiPlayer? = null
+    private var chatBot: ChatBot? = null
+    private var aiSessionId: Int = -1
+    private var humanSessionId: Int = -1
+
     init {
         connection.setOnStateUpdate { json -> handleStateUpdate(json) }
         connection.setOnChatUpdate { json -> handleChatUpdate(json) }
@@ -30,18 +40,117 @@ class GameViewModel(
             )
         }
         connection.setOnScanResult { address ->
-            _state.value = _state.value.copy(connectionState = ConnectionState.CONNECTING)
+            val current = _state.value
+            if (address !in current.discoveredGames.map { it.address }) {
+                _state.value = current.copy(
+                    discoveredGames = current.discoveredGames + DiscoveredGame(address)
+                )
+            }
         }
     }
 
     fun connect() {
-        _state.value = _state.value.copy(connectionState = ConnectionState.SCANNING)
+        _state.value = _state.value.copy(
+            connectionState = ConnectionState.SCANNING,
+            discoveredGames = emptyList()
+        )
         connection.startScan()
+    }
+
+    fun stopScanning() {
+        connection.stopScan()
+        _state.value = _state.value.copy(connectionState = ConnectionState.DISCONNECTED)
+    }
+
+    fun joinGame(address: String) {
+        _state.value = _state.value.copy(connectionState = ConnectionState.CONNECTING)
+        connection.sendCommand("join:$address")
+    }
+
+    fun hostGame() {
+        connection.disconnect()
+        _state.value = _state.value.copy(
+            connectionState = ConnectionState.CONNECTED,
+            discoveredGames = emptyList()
+        )
+    }
+
+    fun startAiGame(game: Game, difficulty: AiPlayer.Difficulty = AiPlayer.Difficulty.MEDIUM) {
+        val ctrl = Controller()
+        val ai = AiPlayer(difficulty = difficulty)
+        val bot = ChatBot()
+
+        controller = ctrl
+        aiPlayer = ai
+        chatBot = bot
+
+        // Create sessions
+        humanSessionId = ctrl.createSession()
+        aiSessionId = ctrl.createSession()
+
+        // Set nicknames
+        ctrl.handle("nicn:You", humanSessionId)
+        ctrl.handle("nicn:AI", aiSessionId)
+
+        // Set game
+        ctrl.setGame(game)
+
+        // Join both players
+        ctrl.handle("join:0", humanSessionId)
+        ctrl.handle("join:1", aiSessionId)
+
+        // Shuffle and deal
+        ctrl.handle("shuf:", humanSessionId)
+        val dealMsg = ctrl.handle("deal:", humanSessionId)
+
+        // Update state
+        _state.value = _state.value.copy(
+            gameMode = GameMode.AI,
+            game = game,
+            mySessionId = humanSessionId,
+            connectionState = ConnectionState.CONNECTED,
+            screen = Screen.GAME,
+            players = listOf(
+                PlayerInfo(humanSessionId, "You", true, false, 0, 0),
+                PlayerInfo(aiSessionId, "AI", true, true, 0, 0)
+            ),
+            chatLog = listOf(bot.greet())
+        )
+
+        // Sync state from controller
+        syncStateFromController(dealMsg)
+
+        // If it's AI's turn, let it play
+        if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            aiTurn()
+        }
+    }
+
+    fun stopAiGame() {
+        controller = null
+        aiPlayer = null
+        chatBot = null
+        aiSessionId = -1
+        humanSessionId = -1
+        _state.value = _state.value.copy(
+            gameMode = GameMode.BLE,
+            screen = Screen.HOME,
+            myHand = emptyList(),
+            discardPile = emptyList(),
+            currentTurn = -1,
+            message = "",
+            isGameOver = false,
+            chatLog = emptyList(),
+            players = emptyList()
+        )
     }
 
     fun disconnect() {
         connection.disconnect()
-        _state.value = _state.value.copy(connectionState = ConnectionState.DISCONNECTED)
+        _state.value = _state.value.copy(
+            connectionState = ConnectionState.DISCONNECTED,
+            discoveredGames = emptyList()
+        )
     }
 
     fun join(slot: Int) {
@@ -58,41 +167,116 @@ class GameViewModel(
     }
 
     fun shuffle() {
-        connection.sendCommand("shuf:")
+        if (_state.value.gameMode == GameMode.AI) {
+            val ctrl = controller ?: return
+            ctrl.handle("shuf:", humanSessionId)
+        } else {
+            connection.sendCommand("shuf:")
+        }
     }
 
     fun deal() {
-        connection.sendCommand("deal:")
+        if (_state.value.gameMode == GameMode.AI) {
+            val ctrl = controller ?: return
+            val msg = ctrl.handle("deal:", humanSessionId)
+            syncStateFromController(msg)
+            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+                aiTurn()
+            }
+        } else {
+            connection.sendCommand("deal:")
+        }
     }
 
     fun pickup(count: Int = 1) {
-        connection.sendCommand("picu:$count")
+        if (_state.value.gameMode == GameMode.AI) {
+            val ctrl = controller ?: return
+            val msg = ctrl.handle("picu:$count", humanSessionId)
+            syncStateFromController(msg)
+            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+                aiTurn()
+            }
+        } else {
+            connection.sendCommand("picu:$count")
+        }
     }
 
     fun putdown(cards: List<Card>) {
         val hand = Hand()
         cards.forEach { hand.add(it) }
-        connection.sendCommand("putd:${hand.toJson()}")
+        if (_state.value.gameMode == GameMode.AI) {
+            val ctrl = controller ?: return
+            val msg = ctrl.handle("putd:${hand.toJson()}", humanSessionId)
+            syncStateFromController(msg)
+            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+                aiTurn()
+            }
+        } else {
+            connection.sendCommand("putd:${hand.toJson()}")
+        }
     }
 
     fun skip() {
-        connection.sendCommand("skip:")
+        if (_state.value.gameMode == GameMode.AI) {
+            val ctrl = controller ?: return
+            val msg = ctrl.handle("skip:", humanSessionId)
+            syncStateFromController(msg)
+            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+                aiTurn()
+            }
+        } else {
+            connection.sendCommand("skip:")
+        }
     }
 
     fun chat(text: String) {
-        connection.sendCommand("chat:$text")
+        if (_state.value.gameMode == GameMode.AI) {
+            _state.value = _state.value.copy(chatLog = _state.value.chatLog + text)
+            val bot = chatBot ?: return
+            val response = bot.respond(text)
+            _state.value = _state.value.copy(chatLog = _state.value.chatLog + "AI: $response")
+        } else {
+            connection.sendCommand("chat:$text")
+        }
     }
 
     fun bid(count: Int) {
-        connection.sendCommand("bid:$count")
+        if (_state.value.gameMode == GameMode.AI) {
+            val ctrl = controller ?: return
+            val msg = ctrl.handle("bid:$count", humanSessionId)
+            syncStateFromController(msg)
+            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+                aiTurn()
+            }
+        } else {
+            connection.sendCommand("bid:$count")
+        }
     }
 
     fun cheat(targetId: Int) {
-        connection.sendCommand("cheat:$targetId")
+        if (_state.value.gameMode == GameMode.AI) {
+            val ctrl = controller ?: return
+            val msg = ctrl.handle("cheat:$targetId", humanSessionId)
+            syncStateFromController(msg)
+            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+                aiTurn()
+            }
+        } else {
+            connection.sendCommand("cheat:$targetId")
+        }
     }
 
     fun ask(data: String) {
-        connection.sendCommand("ask:$data")
+        if (_state.value.gameMode == GameMode.AI) {
+            val ctrl = controller ?: return
+            val msg = ctrl.handle("ask:$data", humanSessionId)
+            syncStateFromController(msg)
+            if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+                aiTurn()
+            }
+        } else {
+            connection.sendCommand("ask:$data")
+        }
     }
 
     fun navigateTo(screen: Screen) {
@@ -108,6 +292,44 @@ class GameViewModel(
     }
 
     // --- Internal handlers ---
+
+    private fun aiTurn() {
+        val ctrl = controller ?: return
+        val ai = aiPlayer ?: return
+
+        val command = ai.decide(ctrl, aiSessionId)
+        val msg = ctrl.handle(command, aiSessionId)
+        syncStateFromController(msg)
+
+        // If AI needs to play again (e.g., after a skip), recurse
+        if (_state.value.currentTurn == aiSessionId && !_state.value.isGameOver) {
+            aiTurn()
+        }
+    }
+
+    private fun syncStateFromController(msg: Message) {
+        if (msg.id != "cards") return
+        val data = msg.data as? String ?: return
+        val obj = gson.fromJson(data, JsonObject::class.java) ?: return
+
+        val newHand = parseCardList(obj, "hand")
+        val newPile = parseCardList(obj, "pile")
+        val turn = obj.get("turn")?.asInt ?: -1
+        val message = obj.get("message")?.asString ?: ""
+        val faceDown = obj.get("faceDown")?.asBoolean ?: false
+        val gameName = obj.get("game")?.asString
+        val game = gameName?.let { Game.fromName(it) } ?: _state.value.game
+
+        _state.value = _state.value.copy(
+            myHand = newHand,
+            discardPile = newPile,
+            currentTurn = turn,
+            message = message,
+            faceDown = faceDown,
+            game = game,
+            isGameOver = newHand.isEmpty() && turn == -1
+        )
+    }
 
     private fun handleStateUpdate(json: String) {
         try {

@@ -1,0 +1,12 @@
+local.properties
+.gradle
+.idea
+build
+gradle
+SESSION.md
+hali.log
+history.txt
+settings.json
+user-approved.txt
+hali-common.log
+security_audit.json
