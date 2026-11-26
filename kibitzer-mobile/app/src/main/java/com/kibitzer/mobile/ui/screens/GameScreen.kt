@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kibitzer.mobile.game.Card
 import com.kibitzer.mobile.model.GameViewModel
 import com.kibitzer.mobile.ui.components.ChatPanel
 import com.kibitzer.mobile.ui.components.DeckView
@@ -38,6 +39,7 @@ fun GameScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var chatInput by remember { mutableStateOf("") }
+    var selectedCards by remember { mutableStateOf(setOf<Card>()) }
 
     Column(
         modifier = Modifier
@@ -111,7 +113,14 @@ fun GameScreen(
         HandRow(
             cards = state.myHand,
             faceDown = false,
-            onPlay = { selected -> viewModel.putdown(selected) }
+            selectedCards = selectedCards,
+            onCardClick = { card ->
+                selectedCards = if (card in selectedCards) {
+                    selectedCards - card
+                } else {
+                    selectedCards + card
+                }
+            }
         )
 
         // Action buttons
@@ -121,6 +130,16 @@ fun GameScreen(
         ) {
             Button(onClick = { viewModel.pickup() }, modifier = Modifier.weight(1f)) {
                 Text("Pick Up")
+            }
+            Button(
+                onClick = {
+                    viewModel.putdown(selectedCards.toList())
+                    selectedCards = emptySet()
+                },
+                enabled = selectedCards.isNotEmpty(),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Play ${selectedCards.size}")
             }
             Button(onClick = { viewModel.skip() }, modifier = Modifier.weight(1f)) {
                 Text("Skip")

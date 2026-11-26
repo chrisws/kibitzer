@@ -1,5 +1,6 @@
 package com.kibitzer.mobile.model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.kibitzer.mobile.game.AiPlayer
 import com.kibitzer.mobile.game.Card
@@ -110,6 +111,7 @@ class GameViewModel(
         // Shuffle and deal
         ctrl.handle("shuf:", humanSessionId)
         val dealMsg = ctrl.handle("deal:", humanSessionId)
+        Log.d("GameVM", "startAiGame: dealMsg.id=${dealMsg.id}, dealMsg.data=${dealMsg.data}")
 
         // Build player list with hand sizes
         val playerList = mutableListOf(
@@ -314,7 +316,11 @@ class GameViewModel(
 
     // --- Internal handlers ---
 
-    private fun aiTurn() {
+    private fun aiTurn(depth: Int = 0) {
+        if (depth > 20) {
+            Log.w("GameVM", "aiTurn: max depth reached, stopping")
+            return
+        }
         val ctrl = controller ?: return
         val currentTurn = _state.value.currentTurn
         val aiIndex = aiSessionIds.indexOf(currentTurn)
@@ -322,19 +328,26 @@ class GameViewModel(
 
         val ai = aiPlayerList[aiIndex]
         val command = ai.decide(ctrl, currentTurn)
+        Log.d("GameVM", "aiTurn: depth=$depth, turn=$currentTurn, command=$command")
         val msg = ctrl.handle(command, currentTurn)
         syncStateFromController(msg)
 
-        // If another AI needs to play, recurse
-        if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-            aiTurn()
+        // If another AI needs to play and turn actually changed, recurse
+        val newTurn = _state.value.currentTurn
+        if (newTurn != currentTurn && aiSessionIds.contains(newTurn) && !_state.value.isGameOver) {
+            aiTurn(depth + 1)
         }
     }
 
     private fun syncStateFromController(msg: Message) {
-        if (msg.id != "cards") return
+        Log.d("GameVM", "syncStateFromController: msg.id=${msg.id}, data=${msg.data}")
+        if (msg.id != "cards") {
+            Log.d("GameVM", "syncStateFromController: SKIP - id is '${msg.id}', not 'cards'")
+            return
+        }
         val data = msg.data as? String ?: return
         val obj = gson.fromJson(data, JsonObject::class.java) ?: return
+        Log.d("GameVM", "syncStateFromController: parsed obj=$obj")
 
         val newHand = parseCardList(obj, "hand")
         val newPile = parseCardList(obj, "pile")
@@ -443,20 +456,31 @@ class GameViewModel(
     }
 
     private fun parseCardList(obj: JsonObject, key: String): List<Card> {
-        val arr = obj.get(key) ?: return emptyList()
-        if (!arr.isJsonArray) return emptyList()
-        return arr.asJsonArray.mapNotNull { elem ->
+        val arr = obj.get(key)
+        Log.d("GameVM", "parseCardList: key='$key', arr=$arr")
+        if (arr == null) {
+            Log.d("GameVM", "parseCardList: key='$key' not found, returning empty")
+            return emptyList()
+        }
+        if (!arr.isJsonArray) {
+            Log.d("GameVM", "parseCardList: key='$key' is not a JsonArray, returning empty")
+            return emptyList()
+        }
+        val result = arr.asJsonArray.mapNotNull { elem ->
             try {
                 val name = if (elem.isJsonPrimitive) {
                     elem.asString
                 } else {
                     elem.asJsonObject.get("name")?.asString
                 }
-                if (name != null) Card.valueOf(name) else null
+                if (name != null) Card.fromName(name) else null
             } catch (e: Exception) {
+                Log.d("GameVM", "parseCardList: failed to parse elem=$elem, error=${e.message}")
                 null
             }
         }
+        Log.d("GameVM", "parseCardList: key='$key' -> ${result.size} cards = $result")
+        return result
     }
 
     override fun onCleared() {
