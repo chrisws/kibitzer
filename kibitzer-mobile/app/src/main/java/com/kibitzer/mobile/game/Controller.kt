@@ -266,20 +266,25 @@ class Controller(private val numRooms: Int = 1) {
     }
 
     private fun putdown(player: Player, handJson: String): Message {
+        android.util.Log.d("Play", "Controller.putdown: player=${player.name()}(id=${player.sessionId}), hand=$handJson, turn=${rooms[player.room].turn}")
         if (!isTurn(player)) {
+            android.util.Log.d("Play", "Controller.putdown: REJECTED - not player's turn (turn=${rooms[player.room].turn}, player=${player.sessionId})")
             return Message("message", "wait for your turn!")
         }
         val room = rooms[player.room]
         val rules = room.rules
         val deck = room.deck
         val hand = Hand.fromJson(handJson)
+        android.util.Log.d("Play", "Controller.putdown: hand parsed=$hand, deck.lastPlay=${deck.lastPlay}, deck.lastSize=${deck.lastSize}, deck.discardSize=${deck.discardSize}")
 
         // Delegate to game handler if present
         gameHandler?.let { handler ->
             return handler.handlePutdown(this, player, hand)
         }
 
-        if (rules.isValidPlay(deck, hand)) {
+        val valid = rules.isValidPlay(deck, hand)
+        android.util.Log.d("Play", "Controller.putdown: isValidPlay=$valid")
+        if (valid) {
             room.saveState(player)
             player.hand.remove(hand)
             deck.putdown(hand)

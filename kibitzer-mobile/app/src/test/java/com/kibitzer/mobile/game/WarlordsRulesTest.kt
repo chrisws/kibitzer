@@ -99,4 +99,41 @@ class WarlordsRulesTest {
         val hand = Hand()
         assertTrue(rules.isWinningPlay(deck, hand))
     }
+
+    @Test
+    fun `findValidCards with empty discard returns all cards`() {
+        val deck = Deck()
+        val hand = Hand().apply { add(Card.TWO_CLUBS); add(Card.FIVE_HEARTS) }
+        val valid = rules.findValidCards(deck, hand)
+        assertEquals(2, valid.size)
+    }
+
+    @Test
+    fun `findValidCards filters to matching ranks`() {
+        val deck = Deck()
+        deck.putdown(Hand().apply { add(Card.FIVE_CLUBS) })
+        val hand = Hand().apply {
+            add(Card.FOUR_HEARTS)   // rank 4 = 5-1, valid
+            add(Card.FIVE_SPADES)    // rank 5 = match, valid
+            add(Card.SIX_DIAMONDS)   // rank 6 = 5+1, valid
+            add(Card.TWO_CLUBS)      // 2s always valid
+            add(Card.TEN_HEARTS)     // rank 10, not valid
+        }
+        val valid = rules.findValidCards(deck, hand)
+        assertEquals(4, valid.size)
+        assertTrue(valid.contains(Card.FOUR_HEARTS))
+        assertTrue(valid.contains(Card.FIVE_SPADES))
+        assertTrue(valid.contains(Card.SIX_DIAMONDS))
+        assertTrue(valid.contains(Card.TWO_CLUBS))
+        assertFalse(valid.contains(Card.TEN_HEARTS))
+    }
+
+    @Test
+    fun `findValidCards returns all when last was 2s`() {
+        val deck = Deck()
+        deck.putdown(Hand().apply { add(Card.TWO_CLUBS) })
+        val hand = Hand().apply { add(Card.ACE_SPADES); add(Card.THREE_HEARTS) }
+        val valid = rules.findValidCards(deck, hand)
+        assertEquals(2, valid.size)
+    }
 }

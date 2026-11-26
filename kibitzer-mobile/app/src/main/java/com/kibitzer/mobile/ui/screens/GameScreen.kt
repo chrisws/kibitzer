@@ -133,8 +133,10 @@ fun GameScreen(
             }
             Button(
                 onClick = {
-                    viewModel.putdown(selectedCards.toList())
-                    selectedCards = emptySet()
+                    val success = viewModel.putdown(selectedCards.toList())
+                    if (success) {
+                        selectedCards = emptySet()
+                    }
                 },
                 enabled = selectedCards.isNotEmpty(),
                 modifier = Modifier.weight(1f)

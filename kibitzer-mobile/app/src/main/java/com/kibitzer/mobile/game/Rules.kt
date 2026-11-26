@@ -8,6 +8,7 @@ abstract class Rules {
     abstract fun getRank(): CardRank
     abstract fun handSize(players: Int): Int
     abstract fun isValidPlay(deck: Deck, hand: Hand): Boolean
+    open fun findValidCards(deck: Deck, hand: Hand): List<Card> = hand.toList()
     abstract fun isWinningPlay(deck: Deck, hand: Hand): Boolean
     abstract fun name(): String
     abstract fun url(): String

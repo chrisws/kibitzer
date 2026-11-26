@@ -21,6 +21,12 @@ class FreeRules : Rules() {
 
     override fun isValidPlay(deck: Deck, hand: Hand): Boolean = true
 
+    override fun findValidCards(deck: Deck, hand: Hand): List<Card> {
+        val last = deck.lastPlay
+        if (last == null) return hand.toList()
+        return hand.toList().filter { rank2A(it) > rank2A(last) }
+    }
+
     override fun isWinningPlay(deck: Deck, hand: Hand): Boolean = false
 
     override fun name(): String = "Rules Free"

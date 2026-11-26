@@ -30,6 +30,14 @@ class CrazyEightsRules : Rules() {
         return rank2A(card) == rank2A(last)
     }
 
+    override fun findValidCards(deck: Deck, hand: Hand): List<Card> {
+        if (deck.discardSize == 0) return hand.toList()
+        val last = deck.lastPlay ?: return hand.toList()
+        return hand.toList().filter { card ->
+            rank2A(card) == rank2A(Card.EIGHT_CLUBS) || rank2A(card) == rank2A(last)
+        }
+    }
+
     override fun isWinningPlay(deck: Deck, hand: Hand): Boolean = hand.size == 0
 
     override fun name(): String = "Crazy Eights"

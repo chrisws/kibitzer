@@ -97,4 +97,28 @@ class CrazyEightsRulesTest {
         val hand = Hand()
         assertTrue(rules.isWinningPlay(deck, hand))
     }
+
+    @Test
+    fun `findValidCards with empty discard returns all`() {
+        val deck = Deck()
+        val hand = Hand().apply { add(Card.TWO_CLUBS); add(Card.ACE_SPADES) }
+        val valid = rules.findValidCards(deck, hand)
+        assertEquals(2, valid.size)
+    }
+
+    @Test
+    fun `findValidCards matches rank or 8s`() {
+        val deck = Deck()
+        deck.putdown(Hand().apply { add(Card.FIVE_CLUBS) })
+        val hand = Hand().apply {
+            add(Card.FIVE_HEARTS)    // rank 5, matches
+            add(Card.EIGHT_SPADES)    // 8, always valid
+            add(Card.KING_DIAMONDS)   // rank 13, not valid
+        }
+        val valid = rules.findValidCards(deck, hand)
+        assertEquals(2, valid.size)
+        assertTrue(valid.contains(Card.FIVE_HEARTS))
+        assertTrue(valid.contains(Card.EIGHT_SPADES))
+        assertFalse(valid.contains(Card.KING_DIAMONDS))
+    }
 }

@@ -219,18 +219,37 @@ class GameViewModel(
         }
     }
 
-    fun putdown(cards: List<Card>) {
+    fun putdown(cards: List<Card>): Boolean {
         val hand = Hand()
         cards.forEach { hand.add(it) }
         if (_state.value.gameMode == GameMode.AI) {
-            val ctrl = controller ?: return
+            val ctrl = controller ?: return false
+            Log.d("Play", "putdown: hand=${hand.toJson()}, mySession=$humanSessionId, currentTurn=${_state.value.currentTurn}, myTurn=${_state.value.myTurn}")
             val msg = ctrl.handle("putd:${hand.toJson()}", humanSessionId)
+            Log.d("Play", "putdown: response id='${msg.id}', data='${msg.data}'")
+            if (msg.id == "message") {
+                val room = ctrl.rooms[0]
+                val myHand = ctrl.findSession(humanSessionId)?.hand ?: Hand()
+                val validCards = room.rules.findValidCards(room.deck, myHand)
+                val hint = if (validCards.isNotEmpty()) {
+                    val names = validCards.joinToString(", ") { it.code }
+                    "Not valid. Try: $names"
+                } else {
+                    "No valid plays. Pick up a card."
+                }
+                _state.value = _state.value.copy(message = hint)
+                aiSay(hint)
+                return false
+            }
+            _state.value = _state.value.copy(message = "")
             syncStateFromController(msg)
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
             }
+            return true
         } else {
             connection.sendCommand("putd:${hand.toJson()}")
+            return true
         }
     }
 
@@ -238,6 +257,9 @@ class GameViewModel(
         if (_state.value.gameMode == GameMode.AI) {
             val ctrl = controller ?: return
             val msg = ctrl.handle("skip:", humanSessionId)
+            if (msg.id == "cards") {
+                aiSay("You skipped your turn.")
+            }
             syncStateFromController(msg)
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 aiTurn()
@@ -250,17 +272,19 @@ class GameViewModel(
     fun chat(text: String) {
         if (_state.value.gameMode == GameMode.AI) {
             _state.value = _state.value.copy(chatLog = _state.value.chatLog + "You: $text")
-            aiSessionIds.forEachIndexed { i, sid ->
-                val bot = chatBotList[i]
-                val aiName = aiPlayerList[i].name
-                val response = bot.respond(text)
-                _state.value = _state.value.copy(
-                    chatLog = _state.value.chatLog + "$aiName: $response"
-                )
+            if (chatBotList.isNotEmpty() && aiPlayerList.isNotEmpty()) {
+                val response = chatBotList[0].respond(text)
+                aiSay(response)
             }
         } else {
             connection.sendCommand("chat:$text")
         }
+    }
+
+    private fun aiSay(text: String) {
+        if (aiPlayerList.isEmpty()) return
+        val name = aiPlayerList[0].name
+        _state.value = _state.value.copy(chatLog = _state.value.chatLog + "$name: $text")
     }
 
     fun bid(count: Int) {
@@ -327,15 +351,30 @@ class GameViewModel(
         if (aiIndex == -1) return
 
         val ai = aiPlayerList[aiIndex]
-        val command = ai.decide(ctrl, currentTurn)
+        var command = ai.decide(ctrl, currentTurn)
         Log.d("GameVM", "aiTurn: depth=$depth, turn=$currentTurn, command=$command")
-        val msg = ctrl.handle(command, currentTurn)
+        var msg = ctrl.handle(command, currentTurn)
+
+        // If play was rejected, fall back to pickup
+        if (msg.id == "message" && command.startsWith("putd")) {
+            Log.d("GameVM", "aiTurn: play rejected, falling back to pickup")
+            command = "picu:1"
+            msg = ctrl.handle(command, currentTurn)
+        }
+
         syncStateFromController(msg)
+
+        // Narrate what happened
+        if (msg.id == "cards") {
+            aiSay("${ai.name} played.")
+        }
 
         // If another AI needs to play and turn actually changed, recurse
         val newTurn = _state.value.currentTurn
         if (newTurn != currentTurn && aiSessionIds.contains(newTurn) && !_state.value.isGameOver) {
             aiTurn(depth + 1)
+        } else if (newTurn == humanSessionId && !_state.value.isGameOver) {
+            aiSay("Your turn!")
         }
     }
 
