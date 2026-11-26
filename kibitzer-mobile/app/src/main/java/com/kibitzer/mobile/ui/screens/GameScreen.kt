@@ -136,9 +136,6 @@ fun GameScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(onClick = { viewModel.pickup() }, modifier = Modifier.weight(1f)) {
-                Text("Pick Up")
-            }
             Button(
                 onClick = {
                     val success = viewModel.putdown(selectedCards.toList())
@@ -150,6 +147,9 @@ fun GameScreen(
                 modifier = Modifier.weight(1f)
             ) {
                 Text("Play ${selectedCards.size}")
+            }
+            Button(onClick = { viewModel.pickup() }, modifier = Modifier.weight(1f)) {
+                Text("Pick Up")
             }
             Button(onClick = { viewModel.skip() }, modifier = Modifier.weight(1f)) {
                 Text("Skip")

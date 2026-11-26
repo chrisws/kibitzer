@@ -57,40 +57,44 @@ class AiPlayer(
             return "putd:${clearPlay.toJson()}"
         }
 
-        val validPlays = findAllValidPlays(hand, deck)
+        val last = deck.lastPlay
+        val lastRank = last?.let { rank32(it) }
+        val neededSize = if (deck.discardSize == 0) 1 else deck.lastSize
+
+        val byRank = hand.toList().groupBy { rank32(it) }
+
+        val validPlays = byRank.filter { (rank, cards) ->
+            cards.size >= neededSize && isValidWarlordsRank(rank, lastRank)
+        }.map { (rank, cards) ->
+            Hand().apply { cards.take(neededSize).forEach { add(it) } }
+        }
+
         if (validPlays.isNotEmpty()) {
-            val play = validPlays.minBy { it.toList().sumOf { c -> rank32(c) } }
+            val play = validPlays.minBy { rank32(it.toList().first()) }
             return "putd:${play.toJson()}"
         }
 
         return "picu:1"
     }
 
+    private fun isValidWarlordsRank(rank: Int, lastRank: Int?): Boolean {
+        if (rank == rank32(Card.TWO_CLUBS)) return true
+        if (lastRank == null) return true
+        if (lastRank == rank32(Card.TWO_CLUBS)) return true
+        return rank > lastRank
+    }
+
     private fun findClearPlay(hand: Hand): Hand? {
         val byRank = hand.toList().groupBy { rank32(it) }
         for ((rank, cards) in byRank) {
-            if (rank == rank32(Card.THREE_CLUBS) && cards.size >= 1) {
+            if (rank == rank32(Card.TWO_CLUBS) && cards.size >= 1) {
                 return Hand().apply { add(cards[0]) }
-            }
-            if (rank == rank32(Card.TEN_CLUBS) && cards.size >= 1) {
-                return Hand().apply { add(cards[0]) }
-            }
-            if (cards.size == 4) {
-                return Hand().apply { cards.forEach { add(it) } }
             }
         }
         return null
     }
 
-    private fun findAllValidPlays(hand: Hand, deck: Deck): List<Hand> {
-        val last = deck.lastPlay ?: return emptyList()
-        val lastRank = rank32(last)
-        val validCards = hand.toList().filter { card ->
-            val r = rank32(card)
-            r == lastRank || r == lastRank + 1 || r == lastRank - 1
-        }
-        return validCards.map { Hand().apply { add(it) } }
-    }
+
 
     private fun freeMove(controller: Controller, player: Player, room: Room): String {
         val hand = player.hand

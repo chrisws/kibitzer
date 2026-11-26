@@ -114,4 +114,71 @@ class AiPlayerTest {
         val cmd2 = ai2.decide(controller2, id2)
         assertEquals(cmd1, cmd2)
     }
-}
+    @Test
+    fun `warlords AI putd hand size matches discard size`() {
+        val controller = Controller()
+        val id1 = controller.createSession()
+        val id2 = controller.createSession()
+        controller.handle("join:0", id1)
+        controller.handle("join:1", id2)
+        controller.handle("shuf:", id1)
+        controller.handle("deal:", id1)
+
+        val ai = AiPlayer(seed = 42L)
+
+        // Play several rounds to build up the discard pile
+        repeat(8) {
+            val turn = controller.rooms[0].turn
+            val cmd = ai.decide(controller, turn)
+            val msg = controller.handle(cmd, turn)
+            if (msg.id == "gameover") return
+        }
+
+        // Verify: if AI decides to putd, hand size must match deck.lastSize
+        val turn = controller.rooms[0].turn
+        val deck = controller.rooms[0].deck
+        val cmd = ai.decide(controller, turn)
+
+        if (cmd.startsWith("putd:")) {
+            val handJson = cmd.removePrefix("putd:")
+            val hand = Hand.fromJson(handJson)
+            val expectedSize = if (deck.discardSize == 0) 1 else deck.lastSize
+            assertEquals(
+                "AI must play $expectedSize cards but played ${hand.size}",
+                expectedSize, hand.size
+            )
+        }
+    }
+
+    @Test
+    fun `warlords AI does not loop on invalid play`() {
+        val controller = Controller()
+        val id1 = controller.createSession()
+        val id2 = controller.createSession()
+        controller.handle("join:0", id1)
+        controller.handle("join:1", id2)
+        controller.handle("shuf:", id1)
+        controller.handle("deal:", id1)
+
+        val ai = AiPlayer(seed = 42L)
+
+        // Simulate aiTurn logic: decide, handle, check for rejection
+        var lastCommand = ""
+        var loops = 0
+        repeat(10) {
+            val turn = controller.rooms[0].turn
+            val cmd = ai.decide(controller, turn)
+            if (cmd == lastCommand && cmd.startsWith("putd:")) {
+                loops++
+            }
+            lastCommand = cmd
+            val msg = controller.handle(cmd, turn)
+            if (msg.id == "gameover") return
+            // If rejected, the AI should have fallen back to picu
+            if (msg.id == "message" && cmd.startsWith("putd:")) {
+                // This means the AI produced an invalid play — bug!
+                org.junit.Assert.fail("AI produced invalid putd: $cmd (msg: ${msg.data})")
+            }
+        }
+        assertTrue("AI looped on same command $loops times", loops < 3)
+    }}

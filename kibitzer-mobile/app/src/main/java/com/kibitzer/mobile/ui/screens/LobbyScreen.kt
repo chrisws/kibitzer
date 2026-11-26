@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.kibitzer.mobile.game.Game
 import com.kibitzer.mobile.model.ConnectionState
 import com.kibitzer.mobile.model.GameViewModel
+import com.kibitzer.mobile.ui.components.GameDetailsCard
 import com.kibitzer.mobile.ui.components.PlayerAvatar
 
 @Composable
@@ -160,30 +161,7 @@ fun LobbyScreen(
         }
 
         // --- Game details ---
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Text(
-                    text = state.game.name.replace("_", " "),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = state.game.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Players: ${state.game.minPlayers}–${state.game.maxPlayers}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-            }
-        }
+        GameDetailsCard(game = state.game)
 
         // --- Players ---
         if (state.players.isNotEmpty()) {

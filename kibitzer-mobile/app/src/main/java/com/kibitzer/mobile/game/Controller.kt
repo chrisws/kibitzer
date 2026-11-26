@@ -303,7 +303,14 @@ class Controller(private val numRooms: Int = 1) {
             }
             return cardsMessage(player, player.room, message.toString())
         }
-        return Message("message", "invalid play!")
+        val message = StringBuilder("${player.name()} cannot play")
+        if (rules.noPlayTakesDiscard()) {
+            deck.takeDiscard(player.hand)
+            player.hand.sort(rules.getRank())
+            message.append(" and picked up the discard")
+        }
+        setNextTurn(player.room, message)
+        return cardsMessage(player, player.room, message.toString())
     }
 
     private fun exchange(player: Player, data: String): Message {

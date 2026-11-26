@@ -82,7 +82,8 @@ class GameViewModel(
     fun startAiGame(
         game: Game,
         numAiPlayers: Int = 1,
-        difficulty: AiPlayer.Difficulty = AiPlayer.Difficulty.MEDIUM
+        difficulty: AiPlayer.Difficulty = AiPlayer.Difficulty.MEDIUM,
+        nickname: String = "You"
     ) {
         val ctrl = Controller()
         val aiPlayers = (1..numAiPlayers).map { AiPlayer(difficulty = difficulty) }
@@ -107,6 +108,7 @@ class GameViewModel(
 
         // Join all players
         ctrl.handle("join:0", humanSessionId)
+        ctrl.handle("nicn:$nickname", humanSessionId)
         aiSessionIds.forEachIndexed { i, sid ->
             ctrl.handle("join:${i + 1}", sid)
         }
@@ -118,7 +120,7 @@ class GameViewModel(
 
         // Build player list with hand sizes
         val playerList = mutableListOf(
-            PlayerInfo(humanSessionId, "You", true, false, 0, 0)
+            PlayerInfo(humanSessionId, nickname, true, false, 0, 0)
         )
         aiSessionIds.forEachIndexed { i, sid ->
             val ctrlPlayer = ctrl.findSession(sid)

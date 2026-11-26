@@ -1,0 +1,91 @@
+--------- beginning of main
+11-26 16:56:35.804 26388 26388 D Play    : putdown: hand=["2H"], mySession=1, currentTurn=2, myTurn=false
+11-26 16:56:35.804 26388 26388 D Play    : Controller.putdown: player=(#1)(id=1), hand=["2H"], turn=2
+11-26 16:56:35.804 26388 26388 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 16:56:35.804 26388 26388 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 16:56:38.443 26388 26388 D Play    : putdown: hand=["2H"], mySession=1, currentTurn=2, myTurn=false
+11-26 16:56:38.443 26388 26388 D Play    : Controller.putdown: player=(#1)(id=1), hand=["2H"], turn=2
+11-26 16:56:38.443 26388 26388 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 16:56:38.443 26388 26388 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 16:56:38.732 26388 26388 D Play    : Controller.putdown: player=(#2)(id=2), hand=["4C", "4D"], turn=2
+11-26 16:56:38.732 26388 26388 D Play    : Controller.putdown: hand parsed=4C 4D, deck.lastPlay=FOUR_DIAMONDS, deck.lastSize=2, deck.discardSize=2
+11-26 16:56:38.732 26388 26388 D Play    : Warlords.isValidPlay: checking rank: hand=4C 4D > last=FOUR_DIAMONDS? false, size: 2==2? true
+11-26 16:56:38.732 26388 26388 D Play    : Controller.putdown: isValidPlay=false
+11-26 16:56:39.556 26388 26388 D Play    : Controller.putdown: player=(#2)(id=2), hand=["4C", "4D"], turn=2
+11-26 16:56:39.557 26388 26388 D Play    : Controller.putdown: hand parsed=4C 4D, deck.lastPlay=FOUR_DIAMONDS, deck.lastSize=2, deck.discardSize=2
+11-26 16:56:39.557 26388 26388 D Play    : Warlords.isValidPlay: checking rank: hand=4C 4D > last=FOUR_DIAMONDS? false, size: 2==2? true
+11-26 16:56:39.557 26388 26388 D Play    : Controller.putdown: isValidPlay=false
+11-26 16:56:40.245 26388 26388 D Play    : Controller.putdown: player=(#2)(id=2), hand=["4C", "4D"], turn=2
+11-26 16:56:40.246 26388 26388 D Play    : Controller.putdown: hand parsed=4C 4D, deck.lastPlay=FOUR_DIAMONDS, deck.lastSize=2, deck.discardSize=2
+11-26 16:56:40.246 26388 26388 D Play    : Warlords.isValidPlay: checking rank: hand=4C 4D > last=FOUR_DIAMONDS? false, size: 2==2? true
+11-26 16:56:40.246 26388 26388 D Play    : Controller.putdown: isValidPlay=false
+11-26 16:58:07.983 26804 26804 D Play    : putdown: hand=["4C", "4D", "4H"], mySession=1, currentTurn=1, myTurn=true
+11-26 16:58:07.983 26804 26804 D Play    : Controller.putdown: player=(#1)(id=1), hand=["4C", "4D", "4H"], turn=1
+11-26 16:58:07.983 26804 26804 D Play    : Controller.putdown: hand parsed=4C 4D 4H, deck.lastPlay=null, deck.lastSize=0, deck.discardSize=0
+11-26 16:58:07.983 26804 26804 D Play    : Warlords.isValidPlay: ACCEPT - empty discard
+11-26 16:58:07.983 26804 26804 D Play    : Controller.putdown: isValidPlay=true
+11-26 16:58:07.983 26804 26804 D Play    : putdown: response id='cards', data='{"pile":["4C", "4D", "4H"],"message":"(#1) played 4C 4D 4H","turn":2,"faceDown":false,"game":"Warlords and Scumbags","hand":["5C", "5D", "5H", "5S", "6C", "6H", "6S", "8D", "8H", "9H", "XC", "XS", "QC", "QH", "KC", "KD", "KS", "AD", "AH", "AS", "2C", "2D", "2S"],"sessionId":1}'
+11-26 16:58:09.489 26804 26804 D Play    : Controller.putdown: player=(#2)(id=2), hand=["3C"], turn=2
+11-26 16:58:09.490 26804 26804 D Play    : Controller.putdown: hand parsed=3C, deck.lastPlay=FOUR_HEARTS, deck.lastSize=3, deck.discardSize=3
+11-26 16:58:09.490 26804 26804 D Play    : Warlords.isValidPlay: checking rank: hand=3C > last=FOUR_HEARTS? false, size: 1==3? false
+11-26 16:58:09.490 26804 26804 D Play    : Controller.putdown: isValidPlay=false
+11-26 16:58:20.770 26804 26804 D Play    : putdown: hand=["5C", "5D", "5H"], mySession=1, currentTurn=2, myTurn=false
+11-26 16:58:20.770 26804 26804 D Play    : Controller.putdown: player=(#1)(id=1), hand=["5C", "5D", "5H"], turn=2
+11-26 16:58:20.770 26804 26804 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 16:58:20.770 26804 26804 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 16:58:26.001 26804 26804 D Play    : putdown: hand=["5C"], mySession=1, currentTurn=2, myTurn=false
+11-26 16:58:26.001 26804 26804 D Play    : Controller.putdown: player=(#1)(id=1), hand=["5C"], turn=2
+11-26 16:58:26.001 26804 26804 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 16:58:26.001 26804 26804 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 16:58:36.480 26804 26804 D Play    : putdown: hand=["AH"], mySession=1, currentTurn=2, myTurn=false
+11-26 16:58:36.481 26804 26804 D Play    : Controller.putdown: player=(#1)(id=1), hand=["AH"], turn=2
+11-26 16:58:36.481 26804 26804 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 16:58:36.481 26804 26804 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 16:58:37.481 26804 26804 D Play    : putdown: hand=["AH"], mySession=1, currentTurn=2, myTurn=false
+11-26 16:58:37.482 26804 26804 D Play    : Controller.putdown: player=(#1)(id=1), hand=["AH"], turn=2
+11-26 16:58:37.482 26804 26804 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 16:58:37.482 26804 26804 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 16:58:37.986 26804 26804 D Play    : putdown: hand=["AH"], mySession=1, currentTurn=2, myTurn=false
+11-26 16:58:37.987 26804 26804 D Play    : Controller.putdown: player=(#1)(id=1), hand=["AH"], turn=2
+11-26 16:58:37.987 26804 26804 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 16:58:37.987 26804 26804 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 16:58:38.635 26804 26804 D Play    : putdown: hand=["AH"], mySession=1, currentTurn=2, myTurn=false
+11-26 16:58:38.635 26804 26804 D Play    : Controller.putdown: player=(#1)(id=1), hand=["AH"], turn=2
+11-26 16:58:38.635 26804 26804 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 16:58:38.635 26804 26804 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 16:58:39.850 26804 26804 D Play    : Controller.putdown: player=(#2)(id=2), hand=["3C"], turn=2
+11-26 16:58:39.851 26804 26804 D Play    : Controller.putdown: hand parsed=3C, deck.lastPlay=FOUR_HEARTS, deck.lastSize=3, deck.discardSize=3
+11-26 16:58:39.851 26804 26804 D Play    : Warlords.isValidPlay: checking rank: hand=3C > last=FOUR_HEARTS? false, size: 1==3? false
+11-26 16:58:39.851 26804 26804 D Play    : Controller.putdown: isValidPlay=false
+11-26 16:58:40.414 26804 26804 D Play    : Controller.putdown: player=(#2)(id=2), hand=["3C"], turn=2
+11-26 16:58:40.415 26804 26804 D Play    : Controller.putdown: hand parsed=3C, deck.lastPlay=FOUR_HEARTS, deck.lastSize=3, deck.discardSize=3
+11-26 16:58:40.415 26804 26804 D Play    : Warlords.isValidPlay: checking rank: hand=3C > last=FOUR_HEARTS? false, size: 1==3? false
+11-26 16:58:40.415 26804 26804 D Play    : Controller.putdown: isValidPlay=false
+11-26 17:00:35.393 26981 26981 D Play    : putdown: hand=["3S"], mySession=1, currentTurn=1, myTurn=true
+11-26 17:00:35.394 26981 26981 D Play    : Controller.putdown: player=(#1)(id=1), hand=["3S"], turn=1
+11-26 17:00:35.394 26981 26981 D Play    : Controller.putdown: hand parsed=3S, deck.lastPlay=null, deck.lastSize=0, deck.discardSize=0
+11-26 17:00:35.395 26981 26981 D Play    : Warlords.isValidPlay: ACCEPT - empty discard
+11-26 17:00:35.395 26981 26981 D Play    : Controller.putdown: isValidPlay=true
+11-26 17:00:35.395 26981 26981 D Play    : putdown: response id='cards', data='{"pile":[],"message":"(#1) played 3S, discard pile now has 0 cards","turn":2,"faceDown":false,"game":"Warlords and Scumbags","hand":["5D", "5S", "6S", "7C", "7D", "7H", "7S", "8S", "9C", "9D", "9H", "9S", "XH", "JC", "JD", "JH", "JS", "QC", "QD", "KD", "KH", "KS", "AC", "AH", "2D"],"sessionId":1}'
+11-26 17:00:36.901 26981 26981 D Play    : Controller.putdown: player=(#2)(id=2), hand=["3C"], turn=2
+11-26 17:00:36.902 26981 26981 D Play    : Controller.putdown: hand parsed=3C, deck.lastPlay=null, deck.lastSize=0, deck.discardSize=0
+11-26 17:00:36.902 26981 26981 D Play    : Warlords.isValidPlay: ACCEPT - empty discard
+11-26 17:00:36.902 26981 26981 D Play    : Controller.putdown: isValidPlay=true
+11-26 17:00:41.391 26981 26981 D Play    : putdown: hand=["4C"], mySession=1, currentTurn=1, myTurn=true
+11-26 17:00:41.391 26981 26981 D Play    : Controller.putdown: player=(#1)(id=1), hand=["4C"], turn=1
+11-26 17:00:41.392 26981 26981 D Play    : Controller.putdown: hand parsed=4C, deck.lastPlay=null, deck.lastSize=0, deck.discardSize=0
+11-26 17:00:41.392 26981 26981 D Play    : Warlords.isValidPlay: ACCEPT - empty discard
+11-26 17:00:41.392 26981 26981 D Play    : Controller.putdown: isValidPlay=true
+11-26 17:00:41.392 26981 26981 D Play    : putdown: response id='cards', data='{"pile":["4C"],"message":"(#1) played 4C","turn":2,"faceDown":false,"game":"Warlords and Scumbags","hand":["5D", "5S", "6S", "7C", "7D", "7H", "7S", "8S", "9C", "9D", "9H", "9S", "XH", "JC", "JD", "JH", "JS", "QC", "QD", "KD", "KH", "KS", "AC", "AH", "2D"],"sessionId":1}'
+11-26 17:00:42.900 26981 26981 D Play    : Controller.putdown: player=(#2)(id=2), hand=["3D"], turn=2
+11-26 17:00:42.900 26981 26981 D Play    : Controller.putdown: hand parsed=3D, deck.lastPlay=FOUR_CLUBS, deck.lastSize=1, deck.discardSize=1
+11-26 17:00:42.901 26981 26981 D Play    : Warlords.isValidPlay: checking rank: hand=3D > last=FOUR_CLUBS? false, size: 1==1? true
+11-26 17:00:42.901 26981 26981 D Play    : Controller.putdown: isValidPlay=false
+11-26 17:00:54.492 26981 26981 D Play    : putdown: hand=["5S", "6S"], mySession=1, currentTurn=2, myTurn=false
+11-26 17:00:54.492 26981 26981 D Play    : Controller.putdown: player=(#1)(id=1), hand=["5S", "6S"], turn=2
+11-26 17:00:54.492 26981 26981 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 17:00:54.492 26981 26981 D Play    : putdown: response id='message', data='wait for your turn!'
+11-26 17:00:58.883 26981 26981 D Play    : putdown: hand=["5S", "6S"], mySession=1, currentTurn=2, myTurn=false
+11-26 17:00:58.883 26981 26981 D Play    : Controller.putdown: player=(#1)(id=1), hand=["5S", "6S"], turn=2
+11-26 17:00:58.883 26981 26981 D Play    : Controller.putdown: REJECTED - not player's turn (turn=2, player=1)
+11-26 17:00:58.883 26981 26981 D Play    : putdown: response id='message', data='wait for your turn!'
