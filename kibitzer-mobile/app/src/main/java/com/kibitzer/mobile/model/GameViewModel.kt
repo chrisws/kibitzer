@@ -11,9 +11,12 @@ import com.kibitzer.mobile.game.Hand
 import com.kibitzer.mobile.game.Message
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class GameViewModel(
     private val connection: GameConnection
@@ -140,7 +143,7 @@ class GameViewModel(
 
         // If it's an AI's turn, let it play
         if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-            aiTurn()
+            viewModelScope.launch { aiTurn() }
         }
     }
 
@@ -199,7 +202,7 @@ class GameViewModel(
             val msg = ctrl.handle("deal:", humanSessionId)
             syncStateFromController(msg)
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-                aiTurn()
+                viewModelScope.launch { aiTurn() }
             }
         } else {
             connection.sendCommand("deal:")
@@ -212,7 +215,7 @@ class GameViewModel(
             val msg = ctrl.handle("picu:$count", humanSessionId)
             syncStateFromController(msg)
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-                aiTurn()
+                viewModelScope.launch { aiTurn() }
             }
         } else {
             connection.sendCommand("picu:$count")
@@ -243,8 +246,11 @@ class GameViewModel(
             }
             _state.value = _state.value.copy(message = "")
             syncStateFromController(msg)
+            if (_state.value.message.isNotBlank()) {
+                _state.value = _state.value.copy(chatLog = _state.value.chatLog + _state.value.message)
+            }
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-                aiTurn()
+                viewModelScope.launch { aiTurn() }
             }
             return true
         } else {
@@ -262,7 +268,7 @@ class GameViewModel(
             }
             syncStateFromController(msg)
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-                aiTurn()
+                viewModelScope.launch { aiTurn() }
             }
         } else {
             connection.sendCommand("skip:")
@@ -293,7 +299,7 @@ class GameViewModel(
             val msg = ctrl.handle("bid:$count", humanSessionId)
             syncStateFromController(msg)
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-                aiTurn()
+                viewModelScope.launch { aiTurn() }
             }
         } else {
             connection.sendCommand("bid:$count")
@@ -306,7 +312,7 @@ class GameViewModel(
             val msg = ctrl.handle("cheat:$targetId", humanSessionId)
             syncStateFromController(msg)
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-                aiTurn()
+                viewModelScope.launch { aiTurn() }
             }
         } else {
             connection.sendCommand("cheat:$targetId")
@@ -319,7 +325,7 @@ class GameViewModel(
             val msg = ctrl.handle("ask:$data", humanSessionId)
             syncStateFromController(msg)
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
-                aiTurn()
+                viewModelScope.launch { aiTurn() }
             }
         } else {
             connection.sendCommand("ask:$data")
@@ -340,11 +346,12 @@ class GameViewModel(
 
     // --- Internal handlers ---
 
-    private fun aiTurn(depth: Int = 0) {
+    private suspend fun aiTurn(depth: Int = 0) {
         if (depth > 20) {
             Log.w("GameVM", "aiTurn: max depth reached, stopping")
             return
         }
+        delay(1500)
         val ctrl = controller ?: return
         val currentTurn = _state.value.currentTurn
         val aiIndex = aiSessionIds.indexOf(currentTurn)
@@ -366,7 +373,7 @@ class GameViewModel(
 
         // Narrate what happened
         if (msg.id == "cards") {
-            aiSay("${ai.name} played.")
+            aiSay(_state.value.message.ifBlank { "${ai.name} played." })
         }
 
         // If another AI needs to play and turn actually changed, recurse

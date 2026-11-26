@@ -32,7 +32,7 @@
     "n_max": 3,
     "n_min": 1,
     "p_min": 0.0,
-    "pos_threshold": 0.4,
+    "pos_threshold": 0.3,
     "adaptive": true
   },
   "suffix": {
@@ -78,7 +78,8 @@
     "adb": "/usr/bin/adb"
   },
   "extra_dirs": [
-    "/home/chrisws/models"
+    "/home/chrisws/models",
+    "/home/chrisws/github/compose-kotlin-agent-skills"
   ],
   "knowledge_files": []
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.kibitzer.mobile.ui.theme.ChatBg
 
@@ -27,9 +28,11 @@ fun ChatPanel(
     onSend: (String) -> Unit,
     input: String,
     onInputChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClose: (() -> Unit)? = null
 ) {
     val listState = rememberLazyListState()
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
@@ -40,7 +43,6 @@ fun ChatPanel(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(160.dp)
             .padding(8.dp)
     ) {
         LazyColumn(
@@ -68,15 +70,27 @@ fun ChatPanel(
                 placeholder = { Text("Chat...") },
                 maxLines = 1
             )
-            Button(onClick = { onInputChange("") }) {
-                Text("Clear")
-            }
             Button(onClick = {
                 if (input.isNotBlank()) {
                     onSend(input)
+                    focusManager.clearFocus()
                 }
             }) {
                 Text("Send")
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(onClick = { onInputChange("") }, modifier = Modifier.weight(1f)) {
+                Text("Clear")
+            }
+            if (onClose != null) {
+                Button(onClick = onClose, modifier = Modifier.weight(1f)) {
+                    Text("Close")
+                }
             }
         }
     }
