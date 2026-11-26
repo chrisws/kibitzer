@@ -397,7 +397,11 @@ class GameViewModel(
         val obj = gson.fromJson(data, JsonObject::class.java) ?: return
         Log.d("GameVM", "syncStateFromController: parsed obj=$obj")
 
-        val newHand = parseCardList(obj, "hand")
+        // Always read the human player's hand from the controller,
+        // because the "hand" field in the message reflects the
+        // acting player (which may be an AI), not the human.
+        val newHand = controller?.findSession(humanSessionId)?.hand?.toList()
+            ?: parseCardList(obj, "hand")
         val newPile = parseCardList(obj, "pile")
         val turn = obj.get("turn")?.asInt ?: -1
         val rawMessage = obj.get("message")?.asString ?: ""

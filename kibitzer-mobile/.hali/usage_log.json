@@ -1,18 +1,19 @@
 {
-  "total_turns": 3,
-  "total_llm_ms": 61592.6,
-  "total_tool_calls": 8,
-  "total_tool_errors": 0,
-  "peak_kv_pct": 19.162,
-  "total_tokens": 3010,
-  "cumulative_tokens": 544520,
-  "cumulative_tool_calls": 1356,
-  "cumulative_tool_errors": 32,
-  "cumulative_turns": 69,
-  "cumulative_llm_ms": 1.68414e+07,
+  "total_turns": 4,
+  "total_llm_ms": 417171,
+  "total_tool_calls": 46,
+  "total_tool_errors": 1,
+  "peak_kv_pct": 67.601,
+  "total_tokens": 13928,
+  "cumulative_tokens": 676053,
+  "cumulative_tool_calls": 1781,
+  "cumulative_tool_errors": 38,
+  "cumulative_turns": 117,
+  "cumulative_llm_ms": 2.16983e+07,
   "turns": [
-    {"turn": 1, "llm_ms": 41504.5, "tokens": 2406, "tool_calls": 6, "tool_errors": 0, "kv_pct": 12.3886, "files_read": 2, "files_written": 4},
-    {"turn": 2, "llm_ms": 11026.9, "tokens": 296, "tool_calls": 1, "tool_errors": 0, "kv_pct": 15.7578, "files_read": 0, "files_written": 0},
-    {"turn": 3, "llm_ms": 9061.22, "tokens": 308, "tool_calls": 1, "tool_errors": 0, "kv_pct": 19.162, "files_read": 0, "files_written": 0}
+    {"turn": 1, "llm_ms": 204596, "tokens": 5305, "tool_calls": 31, "tool_errors": 1, "kv_pct": 29.6753, "files_read": 10, "files_written": 7},
+    {"turn": 2, "llm_ms": 30108.7, "tokens": 1065, "tool_calls": 5, "tool_errors": 0, "kv_pct": 35.4813, "files_read": 1, "files_written": 3},
+    {"turn": 3, "llm_ms": 25110.4, "tokens": 1168, "tool_calls": 0, "tool_errors": 0, "kv_pct": 37.3306, "files_read": 0, "files_written": 0},
+    {"turn": 4, "llm_ms": 157356, "tokens": 6390, "tool_calls": 10, "tool_errors": 0, "kv_pct": 67.601, "files_read": 5, "files_written": 3}
   ]
 }

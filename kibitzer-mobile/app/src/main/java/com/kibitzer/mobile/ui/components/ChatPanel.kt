@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,8 +27,7 @@ fun ChatPanel(
     onSend: (String) -> Unit,
     input: String,
     onInputChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    onClose: (() -> Unit)? = null
+    modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
@@ -77,20 +75,6 @@ fun ChatPanel(
                 }
             }) {
                 Text("Send")
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(onClick = { onInputChange("") }, modifier = Modifier.weight(1f)) {
-                Text("Clear")
-            }
-            if (onClose != null) {
-                Button(onClick = onClose, modifier = Modifier.weight(1f)) {
-                    Text("Close")
-                }
             }
         }
     }

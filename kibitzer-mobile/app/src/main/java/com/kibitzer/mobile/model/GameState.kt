@@ -33,7 +33,8 @@ enum class Screen {
     HELP,
     CONNECTION_HELP,
     GAME_RULES,
-    ABOUT
+    ABOUT,
+    CHAT
 }
 
 enum class GameMode {

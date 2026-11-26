@@ -303,14 +303,7 @@ class Controller(private val numRooms: Int = 1) {
             }
             return cardsMessage(player, player.room, message.toString())
         }
-        val message = StringBuilder("${player.name()} cannot play")
-        if (rules.noPlayTakesDiscard()) {
-            deck.takeDiscard(player.hand)
-            player.hand.sort(rules.getRank())
-            message.append(" and picked up the discard")
-        }
-        setNextTurn(player.room, message)
-        return cardsMessage(player, player.room, message.toString())
+        return Message("message", "${player.name()} cannot play")
     }
 
     private fun exchange(player: Player, data: String): Message {
@@ -449,36 +442,9 @@ class Controller(private val numRooms: Int = 1) {
         return Message("cards", sb.toString())
     }
 
-    private fun canPlay(sessionId: Int, message: StringBuilder): Boolean {
-        val player = findSession(sessionId) ?: return false
-        val room = rooms[player.room]
-        val rules = room.rules
-        val deck = room.deck
-
-        var result = rules.canPlay(deck, player.hand)
-        if (!result && rules.noPlayTakesDiscard()) {
-            deck.takeDiscard(player.hand)
-            player.hand.sort(rules.getRank())
-            result = rules.canPlay(deck, player.hand)
-            message.append(" ${player.name()} picked up the deck.")
-        }
-        return result
-    }
-
     private fun setNextTurn(room: Int, message: StringBuilder) {
         val roomObj = rooms[room]
-        var current = roomObj.turn
-        var next = nextTurn(room)
-        var count = 0
-        while (next != current && count < players.size) {
-            if (canPlay(next, message)) {
-                roomObj.turn = next
-                break
-            } else {
-                next = nextTurn(room)
-            }
-            count++
-        }
+        roomObj.turn = nextTurn(room)
     }
 
     private fun isTurn(player: Player): Boolean =
