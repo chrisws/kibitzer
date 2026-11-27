@@ -16,31 +16,33 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AboutScreen(onBack: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Kibitzer",
-            style = MaterialTheme.typography.displayLarge
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Version 0.1.0",
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Card games over Bluetooth Low Energy.\n" +
-                "No internet required. Just bring your friends.",
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Spacer(modifier = Modifier.height(48.dp))
-        Button(onClick = onBack) {
-            Text("Back")
-        }
+  Column(
+    modifier =
+      Modifier
+        .fillMaxSize()
+        .padding(32.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
+  ) {
+    Text(
+      text = "Kibitzer",
+      style = MaterialTheme.typography.displayLarge,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+      text = "Version 0.1.0",
+      style = MaterialTheme.typography.bodyLarge,
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+    Text(
+      text =
+        "Card games over Bluetooth Low Energy.\n" +
+          "No internet required. Just bring your friends.",
+      style = MaterialTheme.typography.bodyLarge,
+    )
+    Spacer(modifier = Modifier.height(48.dp))
+    Button(onClick = onBack) {
+      Text("Back")
     }
+  }
 }

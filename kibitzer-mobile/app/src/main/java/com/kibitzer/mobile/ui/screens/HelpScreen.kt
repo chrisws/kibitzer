@@ -17,37 +17,38 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HelpScreen(
-    onBack: () -> Unit,
-    onConnectionHelp: () -> Unit,
-    onGameRules: () -> Unit,
-    onAbout: () -> Unit
+  onBack: () -> Unit,
+  onConnectionHelp: () -> Unit,
+  onGameRules: () -> Unit,
+  onAbout: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Help",
-            style = MaterialTheme.typography.displayLarge
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onConnectionHelp, modifier = Modifier.fillMaxWidth()) {
-            Text("Connection Help")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onGameRules, modifier = Modifier.fillMaxWidth()) {
-            Text("Game Rules")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onAbout, modifier = Modifier.fillMaxWidth()) {
-            Text("About")
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Back")
-        }
+  Column(
+    modifier =
+      Modifier
+        .fillMaxSize()
+        .padding(32.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
+  ) {
+    Text(
+      text = "Help",
+      style = MaterialTheme.typography.displayLarge,
+    )
+    Spacer(modifier = Modifier.height(32.dp))
+    Button(onClick = onConnectionHelp, modifier = Modifier.fillMaxWidth()) {
+      Text("Connection Help")
     }
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = onGameRules, modifier = Modifier.fillMaxWidth()) {
+      Text("Game Rules")
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = onAbout, modifier = Modifier.fillMaxWidth()) {
+      Text("About")
+    }
+    Spacer(modifier = Modifier.height(32.dp))
+    Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
+      Text("Back")
+    }
+  }
 }

@@ -6,7 +6,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val DarkColorScheme = darkColorScheme(
+private val DarkColorScheme =
+  darkColorScheme(
     primary = DarkPrimary,
     secondary = DarkAccent,
     tertiary = AccentGold,
@@ -16,10 +17,11 @@ private val DarkColorScheme = darkColorScheme(
     onSecondary = CardFace,
     onTertiary = CardBlack,
     onBackground = CardFace,
-    onSurface = CardFace
-)
+    onSurface = CardFace,
+  )
 
-private val LightColorScheme = lightColorScheme(
+private val LightColorScheme =
+  lightColorScheme(
     primary = TableDark,
     secondary = CardBlue,
     tertiary = AccentGold,
@@ -29,17 +31,17 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = CardFace,
     onTertiary = CardBlack,
     onBackground = CardBlack,
-    onSurface = CardBlack
-)
+    onSurface = CardBlack,
+  )
 
 @Composable
 fun KibitzerTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+  darkTheme: Boolean = isSystemInDarkTheme(),
+  content: @Composable () -> Unit,
 ) {
-    MaterialTheme(
-        colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
-        typography = KibitzerTypography,
-        content = content
-    )
+  MaterialTheme(
+    colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
+    typography = KibitzerTypography,
+    content = content,
+  )
 }

@@ -18,35 +18,36 @@ import com.kibitzer.mobile.ui.theme.TurnHighlight
 
 @Composable
 fun TurnIndicator(
-    isMyTurn: Boolean,
-    currentTurn: Int,
-    players: List<PlayerInfo>,
-    modifier: Modifier = Modifier
+  isMyTurn: Boolean,
+  currentTurn: Int,
+  players: List<PlayerInfo>,
+  modifier: Modifier = Modifier,
 ) {
-    val turnPlayer = players.find { it.sessionId == currentTurn }
-    val label = when {
-        currentTurn == -1 -> "Waiting..."
-        isMyTurn -> "Your turn!"
-        turnPlayer != null -> "${turnPlayer.nickname}'s turn"
-        else -> "Waiting..."
+  val turnPlayer = players.find { it.sessionId == currentTurn }
+  val label =
+    when {
+      currentTurn == -1 -> "Waiting..."
+      isMyTurn -> "Your turn!"
+      turnPlayer != null -> "${turnPlayer.nickname}'s turn"
+      else -> "Waiting..."
     }
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-            .background(
-                if (isMyTurn) TurnHighlight else MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(8.dp)
-            )
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelLarge,
-            color = if (isMyTurn) Color(0xFF1A1A2E) else MaterialTheme.colorScheme.onSurface
-        )
-    }
+  Row(
+    modifier =
+      modifier
+        .fillMaxWidth()
+        .padding(horizontal = 8.dp)
+        .background(
+          if (isMyTurn) TurnHighlight else MaterialTheme.colorScheme.surface,
+          RoundedCornerShape(8.dp),
+        ).padding(8.dp),
+    horizontalArrangement = Arrangement.Center,
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Text(
+      text = label,
+      style = MaterialTheme.typography.labelLarge,
+      color = if (isMyTurn) Color(0xFF1A1A2E) else MaterialTheme.colorScheme.onSurface,
+    )
+  }
 }

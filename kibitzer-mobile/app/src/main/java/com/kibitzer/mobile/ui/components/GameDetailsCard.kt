@@ -15,27 +15,27 @@ import com.kibitzer.mobile.game.Game
 
 @Composable
 fun GameDetailsCard(
-    game: Game,
-    modifier: Modifier = Modifier
+  game: Game,
+  modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text(
-                text = game.name.replace("_", " "),
-                style = MaterialTheme.typography.titleSmall
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = game.description,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Players: ${game.minPlayers}\u2013${game.maxPlayers}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-            )
-        }
+  Card(modifier = modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.padding(12.dp)) {
+      Text(
+        text = game.name.replace("_", " "),
+        style = MaterialTheme.typography.titleSmall,
+      )
+      Spacer(modifier = Modifier.height(4.dp))
+      Text(
+        text = game.description,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+      )
+      Spacer(modifier = Modifier.height(4.dp))
+      Text(
+        text = "Players: ${game.minPlayers}\u2013${game.maxPlayers}",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+      )
     }
+  }
 }

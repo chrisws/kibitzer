@@ -15,21 +15,22 @@ import com.kibitzer.mobile.ui.theme.CardBack
 
 @Composable
 fun DeckView(
-    count: Int,
-    faceDown: Boolean = true,
-    modifier: Modifier = Modifier
+  count: Int,
+  faceDown: Boolean = true,
+  modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .size(width = 48.dp, height = 64.dp)
-            .clip(RoundedCornerShape(6.dp))
-            .background(CardBack),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "$count",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
+  Box(
+    modifier =
+      modifier
+        .size(width = 48.dp, height = 64.dp)
+        .clip(RoundedCornerShape(6.dp))
+        .background(CardBack),
+    contentAlignment = Alignment.Center,
+  ) {
+    Text(
+      text = "$count",
+      style = MaterialTheme.typography.titleMedium,
+      color = MaterialTheme.colorScheme.onPrimary,
+    )
+  }
 }

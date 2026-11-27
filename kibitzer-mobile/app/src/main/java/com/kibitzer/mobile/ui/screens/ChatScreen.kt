@@ -25,45 +25,47 @@ import com.kibitzer.mobile.ui.components.ChatPanel
 
 @Composable
 fun ChatScreen(
-    viewModel: GameViewModel,
-    onBack: () -> Unit
+  viewModel: GameViewModel,
+  onBack: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    var chatInput by remember { mutableStateOf("") }
+  val state by viewModel.state.collectAsState()
+  var chatInput by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+  Column(
+    modifier =
+      Modifier
+        .fillMaxSize()
+        .padding(16.dp),
+    verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Chat",
-                style = MaterialTheme.typography.titleLarge
-            )
-            Button(onClick = onBack) {
-                Text("Back")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ChatPanel(
-            messages = state.chatLog,
-            onSend = { text ->
-                viewModel.chat(text)
-                chatInput = ""
-            },
-            input = chatInput,
-            onInputChange = { chatInput = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        )
+      Text(
+        text = "Chat",
+        style = MaterialTheme.typography.titleLarge,
+      )
+      Button(onClick = onBack) {
+        Text("Back")
+      }
     }
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    ChatPanel(
+      messages = state.chatLog,
+      onSend = { text ->
+        viewModel.chat(text)
+        chatInput = ""
+      },
+      input = chatInput,
+      onInputChange = { chatInput = it },
+      modifier =
+        Modifier
+          .fillMaxWidth()
+          .weight(1f),
+    )
+  }
 }

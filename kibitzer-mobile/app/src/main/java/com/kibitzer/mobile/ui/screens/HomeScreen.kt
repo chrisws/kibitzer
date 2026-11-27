@@ -17,37 +17,38 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HomeScreen(
-    onPlayWithFriends: () -> Unit,
-    onPlayWithAi: () -> Unit,
-    onHelp: () -> Unit
+  onPlayWithFriends: () -> Unit,
+  onPlayWithAi: () -> Unit,
+  onHelp: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Kibitzer",
-            style = MaterialTheme.typography.displayLarge
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Card games over Bluetooth",
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Spacer(modifier = Modifier.height(48.dp))
-        Button(onClick = onPlayWithFriends, modifier = Modifier.fillMaxWidth()) {
-            Text("Play with Friends")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onPlayWithAi, modifier = Modifier.fillMaxWidth()) {
-            Text("Play with AI")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onHelp, modifier = Modifier.fillMaxWidth()) {
-            Text("Help")
-        }
+  Column(
+    modifier =
+      Modifier
+        .fillMaxSize()
+        .padding(32.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
+  ) {
+    Text(
+      text = "Kibitzer",
+      style = MaterialTheme.typography.displayLarge,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+      text = "Card games over Bluetooth",
+      style = MaterialTheme.typography.bodyLarge,
+    )
+    Spacer(modifier = Modifier.height(48.dp))
+    Button(onClick = onPlayWithFriends, modifier = Modifier.fillMaxWidth()) {
+      Text("Play with Friends")
     }
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = onPlayWithAi, modifier = Modifier.fillMaxWidth()) {
+      Text("Play with AI")
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = onHelp, modifier = Modifier.fillMaxWidth()) {
+      Text("Help")
+    }
+  }
 }

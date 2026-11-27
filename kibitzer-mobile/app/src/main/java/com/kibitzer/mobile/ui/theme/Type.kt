@@ -6,71 +6,83 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-val KibitzerTypography = Typography(
-    displayLarge = TextStyle(
+val KibitzerTypography =
+  Typography(
+    displayLarge =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         fontSize = 57.sp,
-        lineHeight = 64.sp
-    ),
-    headlineLarge = TextStyle(
+        lineHeight = 64.sp,
+      ),
+    headlineLarge =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = 30.sp,
-        lineHeight = 36.sp
-    ),
-    headlineMedium = TextStyle(
+        lineHeight = 36.sp,
+      ),
+    headlineMedium =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp,
-        lineHeight = 30.sp
-    ),
-    titleLarge = TextStyle(
+        lineHeight = 30.sp,
+      ),
+    titleLarge =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 22.sp,
-        lineHeight = 28.sp
-    ),
-    titleMedium = TextStyle(
+        lineHeight = 28.sp,
+      ),
+    titleMedium =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
-        lineHeight = 24.sp
-    ),
-    bodyLarge = TextStyle(
+        lineHeight = 24.sp,
+      ),
+    bodyLarge =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp
-    ),
-    bodyMedium = TextStyle(
+        lineHeight = 24.sp,
+      ),
+    bodyMedium =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 20.sp
-    ),
-    bodySmall = TextStyle(
+        lineHeight = 20.sp,
+      ),
+    bodySmall =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
-        lineHeight = 16.sp
-    ),
-    labelLarge = TextStyle(
+        lineHeight = 16.sp,
+      ),
+    labelLarge =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
-        lineHeight = 20.sp
-    ),
-    labelMedium = TextStyle(
+        lineHeight = 20.sp,
+      ),
+    labelMedium =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
-        lineHeight = 16.sp
-    ),
-    labelSmall = TextStyle(
+        lineHeight = 16.sp,
+      ),
+    labelSmall =
+      TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
-        lineHeight = 16.sp
-    )
-)
+        lineHeight = 16.sp,
+      ),
+  )

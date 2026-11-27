@@ -20,42 +20,43 @@ import com.kibitzer.mobile.model.GameViewModel
 
 @Composable
 fun GameOverScreen(
-    viewModel: GameViewModel,
-    onPlayAgain: () -> Unit,
-    onHome: () -> Unit
+  viewModel: GameViewModel,
+  onPlayAgain: () -> Unit,
+  onHome: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
+  val state by viewModel.state.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Game Over",
-            style = MaterialTheme.typography.displayLarge
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        if (state.winner.isNotEmpty()) {
-            Text(
-                text = "${state.winner} wins!",
-                style = MaterialTheme.typography.headlineLarge
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = state.message,
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Spacer(modifier = Modifier.height(48.dp))
-        Button(onClick = onPlayAgain) {
-            Text("Play Again")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedButton(onClick = onHome) {
-            Text("Home")
-        }
+  Column(
+    modifier =
+      Modifier
+        .fillMaxSize()
+        .padding(32.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
+  ) {
+    Text(
+      text = "Game Over",
+      style = MaterialTheme.typography.displayLarge,
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+    if (state.winner.isNotEmpty()) {
+      Text(
+        text = "${state.winner} wins!",
+        style = MaterialTheme.typography.headlineLarge,
+      )
     }
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+      text = state.message,
+      style = MaterialTheme.typography.bodyLarge,
+    )
+    Spacer(modifier = Modifier.height(48.dp))
+    Button(onClick = onPlayAgain) {
+      Text("Play Again")
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+    OutlinedButton(onClick = onHome) {
+      Text("Home")
+    }
+  }
 }

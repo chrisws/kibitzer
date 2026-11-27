@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,190 +37,193 @@ import com.kibitzer.mobile.ui.components.PlayerAvatar
 
 @Composable
 fun LobbyScreen(
-    viewModel: GameViewModel,
-    onBack: () -> Unit,
-    onGameStart: () -> Unit
+  viewModel: GameViewModel,
+  onBack: () -> Unit,
+  onGameStart: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    var nickname by remember { mutableStateOf("") }
+  val state by viewModel.state.collectAsState()
+  var nickname by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
-        viewModel.connect()
-    }
+  LaunchedEffect(Unit) {
+    viewModel.connect()
+  }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
+  Column(
+    modifier =
+      Modifier
+        .fillMaxSize()
+        .padding(16.dp),
+    verticalArrangement = Arrangement.spacedBy(12.dp),
+  ) {
+    Text(
+      text = "Play with Friends",
+      style = MaterialTheme.typography.headlineLarge,
+    )
+
+    // --- Connection / Scan section ---
+    when (state.connectionState) {
+      ConnectionState.SCANNING -> {
         Text(
-            text = "Play with Friends",
-            style = MaterialTheme.typography.headlineLarge
+          text = "Scanning for games…",
+          style = MaterialTheme.typography.bodyLarge,
         )
-
-        // --- Connection / Scan section ---
-        when (state.connectionState) {
-            ConnectionState.SCANNING -> {
-                Text(
-                    text = "Scanning for games…",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-            ConnectionState.CONNECTING -> {
-                Text(
-                    text = "Connecting…",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-            ConnectionState.CONNECTED -> {
-                Text(
-                    text = "Connected",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-            else -> {
-                Text(
-                    text = "Not connected",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-
-        // --- Discovered games ---
-        if (state.discoveredGames.isNotEmpty()) {
-            Text(
-                text = "Available Games",
-                style = MaterialTheme.typography.titleMedium
-            )
-            state.discoveredGames.forEach { game ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = game.name.ifBlank { game.address },
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Button(onClick = { viewModel.joinGame(game.address) }) {
-                        Text("Join")
-                    }
-                }
-            }
-        }
-
-        // --- Host new game ---
-        OutlinedButton(onClick = { viewModel.hostGame() }, modifier = Modifier.fillMaxWidth()) {
-            Text("Host New Game")
-        }
-
-        // --- Nickname ---
-        OutlinedTextField(
-            value = nickname,
-            onValueChange = { nickname = it },
-            label = { Text("Nickname") },
-            modifier = Modifier.fillMaxWidth()
+      }
+      ConnectionState.CONNECTING -> {
+        Text(
+          text = "Connecting…",
+          style = MaterialTheme.typography.bodyLarge,
         )
-
-        if (nickname.isNotBlank()) {
-            Button(onClick = { viewModel.setNickname(nickname) }) {
-                Text("Set Name")
-            }
-        }
-
-        // --- Game type ---
-        var gameDropdownExpanded by remember { mutableStateOf(false) }
-
-        Box {
-            OutlinedButton(
-                onClick = { gameDropdownExpanded = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(state.game.name.replace("_", " "))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("▼")
-            }
-
-            DropdownMenu(
-                expanded = gameDropdownExpanded,
-                onDismissRequest = { gameDropdownExpanded = false }
-            ) {
-                Game.entries.forEach { game ->
-                    DropdownMenuItem(
-                        text = { Text(game.name.replace("_", " ")) },
-                        onClick = {
-                            viewModel.setGame(game)
-                            gameDropdownExpanded = false
-                        }
-                    )
-                }
-            }
-        }
-
-        // --- Game details ---
-        GameDetailsCard(game = state.game)
-
-        // --- Players ---
-        if (state.players.isNotEmpty()) {
-            Text(
-                text = "Players",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            LazyColumn(
-                modifier = Modifier.weight(1f)
-            ) {
-                items(state.players) { player ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            PlayerAvatar(
-                                nickname = player.nickname,
-                                active = player.active,
-                                isAi = player.isAi
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(
-                                    text = player.nickname.ifBlank { "Empty" },
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                                if (player.active) {
-                                    Text(
-                                        text = "${player.handSize} cards",
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // --- Bottom buttons ---
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedButton(onClick = onBack, modifier = Modifier.weight(1f)) {
-                Text("Back")
-            }
-            Button(onClick = onGameStart, modifier = Modifier.weight(2f)) {
-                Text("Start Game")
-            }
-        }
+      }
+      ConnectionState.CONNECTED -> {
+        Text(
+          text = "Connected",
+          style = MaterialTheme.typography.bodyLarge,
+        )
+      }
+      else -> {
+        Text(
+          text = "Not connected",
+          style = MaterialTheme.typography.bodyLarge,
+        )
+      }
     }
+
+    // --- Discovered games ---
+    if (state.discoveredGames.isNotEmpty()) {
+      Text(
+        text = "Available Games",
+        style = MaterialTheme.typography.titleMedium,
+      )
+      state.discoveredGames.forEach { game ->
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.SpaceBetween,
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+            text = game.name.ifBlank { game.address },
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f),
+          )
+          Button(onClick = { viewModel.joinGame(game.address) }) {
+            Text("Join")
+          }
+        }
+      }
+    }
+
+    // --- Host new game ---
+    OutlinedButton(onClick = { viewModel.hostGame() }, modifier = Modifier.fillMaxWidth()) {
+      Text("Host New Game")
+    }
+
+    // --- Nickname ---
+    OutlinedTextField(
+      value = nickname,
+      onValueChange = { nickname = it },
+      label = { Text("Nickname") },
+      modifier = Modifier.fillMaxWidth(),
+    )
+
+    if (nickname.isNotBlank()) {
+      Button(onClick = { viewModel.setNickname(nickname) }) {
+        Text("Set Name")
+      }
+    }
+
+    // --- Game type ---
+    var gameDropdownExpanded by remember { mutableStateOf(false) }
+
+    Box {
+      OutlinedButton(
+        onClick = { gameDropdownExpanded = true },
+        modifier = Modifier.fillMaxWidth(),
+      ) {
+        Text(state.game.name.replace("_", " "))
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("▼")
+      }
+
+      DropdownMenu(
+        expanded = gameDropdownExpanded,
+        onDismissRequest = { gameDropdownExpanded = false },
+      ) {
+        Game.entries.forEach { game ->
+          DropdownMenuItem(
+            text = { Text(game.name.replace("_", " ")) },
+            onClick = {
+              viewModel.setGame(game)
+              gameDropdownExpanded = false
+            },
+          )
+        }
+      }
+    }
+
+    // --- Game details ---
+    GameDetailsCard(game = state.game)
+
+    // --- Players ---
+    if (state.players.isNotEmpty()) {
+      Text(
+        text = "Players",
+        style = MaterialTheme.typography.titleMedium,
+      )
+
+      LazyColumn(
+        modifier = Modifier.weight(1f),
+      ) {
+        items(state.players) { player ->
+          Card(
+            modifier =
+              Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+          ) {
+            Row(
+              modifier =
+                Modifier
+                  .fillMaxWidth()
+                  .padding(8.dp),
+              verticalAlignment = Alignment.CenterVertically,
+            ) {
+              PlayerAvatar(
+                nickname = player.nickname,
+                active = player.active,
+                isAi = player.isAi,
+              )
+              Spacer(modifier = Modifier.width(12.dp))
+              Column {
+                Text(
+                  text = player.nickname.ifBlank { "Empty" },
+                  style = MaterialTheme.typography.bodyLarge,
+                )
+                if (player.active) {
+                  Text(
+                    text = "${player.handSize} cards",
+                    style = MaterialTheme.typography.bodySmall,
+                  )
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    Spacer(modifier = Modifier.weight(1f))
+
+    // --- Bottom buttons ---
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+      OutlinedButton(onClick = onBack, modifier = Modifier.weight(1f)) {
+        Text("Back")
+      }
+      Button(onClick = onGameStart, modifier = Modifier.weight(2f)) {
+        Text("Start Game")
+      }
+    }
+  }
 }

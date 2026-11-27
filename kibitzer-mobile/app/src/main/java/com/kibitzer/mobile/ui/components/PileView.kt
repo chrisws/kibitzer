@@ -1,9 +1,7 @@
 package com.kibitzer.mobile.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,35 +17,35 @@ import com.kibitzer.mobile.game.Card
 
 @Composable
 fun PileView(
-    cards: List<Card>,
-    faceDown: Boolean = false,
-    modifier: Modifier = Modifier
+  cards: List<Card>,
+  faceDown: Boolean = false,
+  modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (cards.isEmpty()) {
-            Text(
-                text = "Discard",
-                style = MaterialTheme.typography.bodySmall
-            )
-        } else {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
-                items(cards) { card ->
-                    CardView(
-                        card = card,
-                        faceDown = faceDown
-                    )
-                }
-            }
-            Text(
-                text = "${cards.size} card${if (cards.size != 1) "s" else ""}",
-                style = MaterialTheme.typography.bodySmall
-            )
+  Column(
+    modifier = modifier.fillMaxWidth(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    if (cards.isEmpty()) {
+      Text(
+        text = "Discard",
+        style = MaterialTheme.typography.bodySmall,
+      )
+    } else {
+      LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        modifier = Modifier.padding(horizontal = 8.dp),
+      ) {
+        items(cards) { card ->
+          CardView(
+            card = card,
+            faceDown = faceDown,
+          )
         }
+      }
+      Text(
+        text = "${cards.size} card${if (cards.size != 1) "s" else ""}",
+        style = MaterialTheme.typography.bodySmall,
+      )
     }
+  }
 }

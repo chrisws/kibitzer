@@ -17,29 +17,31 @@ import com.kibitzer.mobile.ui.theme.PlayerInactive
 
 @Composable
 fun PlayerAvatar(
-    nickname: String,
-    active: Boolean = false,
-    isAi: Boolean = false,
-    modifier: Modifier = Modifier
+  nickname: String,
+  active: Boolean = false,
+  isAi: Boolean = false,
+  modifier: Modifier = Modifier,
 ) {
-    val bgColor = when {
-        isAi -> Color(0xFF7E57C2)
-        active -> PlayerActive
-        else -> PlayerInactive
+  val bgColor =
+    when {
+      isAi -> Color(0xFF7E57C2)
+      active -> PlayerActive
+      else -> PlayerInactive
     }
 
-    Box(
-        modifier = modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .background(bgColor),
-        contentAlignment = Alignment.Center
-    ) {
-        val initial = nickname.firstOrNull()?.uppercase() ?: "?"
-        Text(
-            text = initial,
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.White
-        )
-    }
+  Box(
+    modifier =
+      modifier
+        .size(40.dp)
+        .clip(CircleShape)
+        .background(bgColor),
+    contentAlignment = Alignment.Center,
+  ) {
+    val initial = nickname.firstOrNull()?.uppercase() ?: "?"
+    Text(
+      text = initial,
+      style = MaterialTheme.typography.titleMedium,
+      color = Color.White,
+    )
+  }
 }

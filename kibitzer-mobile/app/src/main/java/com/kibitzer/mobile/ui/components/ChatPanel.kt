@@ -19,63 +19,63 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import com.kibitzer.mobile.ui.theme.ChatBg
 
 @Composable
 fun ChatPanel(
-    messages: List<String>,
-    onSend: (String) -> Unit,
-    input: String,
-    onInputChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+  messages: List<String>,
+  onSend: (String) -> Unit,
+  input: String,
+  onInputChange: (String) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
-    val focusManager = LocalFocusManager.current
+  val listState = rememberLazyListState()
+  val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.size - 1)
-        }
+  LaunchedEffect(messages.size) {
+    if (messages.isNotEmpty()) {
+      listState.animateScrollToItem(messages.size - 1)
     }
+  }
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp)
+  Column(
+    modifier =
+      modifier
+        .fillMaxWidth()
+        .padding(8.dp),
+  ) {
+    LazyColumn(
+      state = listState,
+      modifier = Modifier.weight(1f),
+      verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            items(messages) { msg ->
-                Text(
-                    text = msg,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextField(
-                value = input,
-                onValueChange = onInputChange,
-                modifier = Modifier.weight(1f),
-                placeholder = { Text("Chat...") },
-                maxLines = 1
-            )
-            Button(onClick = {
-                if (input.isNotBlank()) {
-                    onSend(input)
-                    focusManager.clearFocus()
-                }
-            }) {
-                Text("Send")
-            }
-        }
+      items(messages) { msg ->
+        Text(
+          text = msg,
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurface,
+        )
+      }
     }
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      TextField(
+        value = input,
+        onValueChange = onInputChange,
+        modifier = Modifier.weight(1f),
+        placeholder = { Text("Chat...") },
+        maxLines = 1,
+      )
+      Button(onClick = {
+        if (input.isNotBlank()) {
+          onSend(input)
+          focusManager.clearFocus()
+        }
+      }) {
+        Text("Send")
+      }
+    }
+  }
 }

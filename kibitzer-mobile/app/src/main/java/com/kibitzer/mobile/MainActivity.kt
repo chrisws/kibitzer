@@ -15,27 +15,27 @@ import com.kibitzer.mobile.ui.navigation.NavGraph
 import com.kibitzer.mobile.ui.theme.KibitzerTheme
 
 class MainActivity : ComponentActivity() {
+  private lateinit var viewModel: GameViewModel
 
-    private lateinit var viewModel: GameViewModel
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    val service = GameService()
+    viewModel = GameViewModel(service)
 
-        val service = GameService()
-        viewModel = GameViewModel(service)
-
-        setContent {
-            KibitzerTheme {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    NavGraph(viewModel)
-                }
-            }
+    setContent {
+      KibitzerTheme {
+        Surface(
+          modifier =
+            Modifier
+              .fillMaxSize()
+              .systemBarsPadding(),
+          color = MaterialTheme.colorScheme.background,
+        ) {
+          NavGraph(viewModel)
         }
+      }
     }
+  }
 }

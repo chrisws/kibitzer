@@ -16,3 +16,7 @@
 ## Code style
 
 - 2 spaces, no tabs
+- enforced by ktlint via `org.jmailen.kotlinter` Gradle plugin
+- check: `./gradlew :app:lintKotlin`
+- auto-fix: `./gradlew :app:formatKotlin`
+- rules defined in `.editorconfig` at project root
