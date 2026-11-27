@@ -136,4 +136,58 @@ class WarlordsRulesTest {
         val valid = rules.findValidCards(deck, hand)
         assertEquals(2, valid.size)
     }
+
+    // --- invalidReason tests ---
+
+    @Test
+    fun `invalidReason for empty hand`() {
+        val deck = Deck()
+        deck.shuffle()
+        val hand = Hand()
+        assertEquals("You have no cards to play", rules.invalidReason(deck, hand))
+    }
+
+    @Test
+    fun `invalidReason for mixed ranks`() {
+        val deck = Deck()
+        deck.shuffle()
+        deck.putdown(Hand().apply { add(Card.FIVE_CLUBS) })
+        val hand = Hand().apply {
+            add(Card.FIVE_HEARTS)
+            add(Card.SIX_SPADES)
+        }
+        assertEquals("All cards must be the same rank", rules.invalidReason(deck, hand))
+    }
+
+    @Test
+    fun `invalidReason for wrong card count`() {
+        val deck = Deck()
+        deck.shuffle()
+        val played = Hand().apply {
+            add(Card.NINE_CLUBS)
+            add(Card.NINE_HEARTS)
+            add(Card.NINE_SPADES)
+        }
+        deck.putdown(played)
+        val hand = Hand().apply { add(Card.TEN_CLUBS) }
+        assertEquals("You must play 3 cards (last play was 3)", rules.invalidReason(deck, hand))
+    }
+
+    @Test
+    fun `invalidReason for rank too low`() {
+        val deck = Deck()
+        deck.shuffle()
+        deck.putdown(Hand().apply { add(Card.ACE_CLUBS) })
+        val hand = Hand().apply { add(Card.THREE_CLUBS) }
+        assertEquals("Your rank is not high enough to beat Aces", rules.invalidReason(deck, hand))
+    }
+
+    @Test
+    fun `invalidReason returns generic for empty discard edge case`() {
+        val deck = Deck()
+        deck.shuffle()
+        // Empty discard - should be valid, so reason is the fallback
+        val hand = Hand().apply { add(Card.FIVE_CLUBS) }
+        assertEquals("Should be valid on an empty discard", rules.invalidReason(deck, hand))
+    }
 }

@@ -1,6 +1,7 @@
 local.properties
 .gradle
 .idea
+*.log
 build
 gradle
 SESSION.md

@@ -163,4 +163,35 @@ class ControllerTest {
     fun `destroySession returns null for unknown`() {
         assertNull(controller.destroySession(999))
     }
+
+    @Test
+    fun `pickup from discard produces valid JSON message`() {
+        val ctrl = Controller()
+        ctrl.setGame(Game.WARLORDS)
+        val id1 = ctrl.createSession()
+        val id2 = ctrl.createSession()
+        ctrl.handle("join:0", id1)
+        ctrl.handle("join:1", id2)
+        ctrl.handle("shuf:", id1)
+        ctrl.handle("deal:", id1)
+
+        // Play a card to create a discard pile
+        val hand = ctrl.findSession(id1)!!.hand
+        val card = hand.peek()
+        hand.remove(card)
+        val playHand = Hand().apply { add(card) }
+        ctrl.handle("putd:${playHand.toJson()}", id1)
+
+        // Now pickup from discard - message must not contain unescaped quotes
+        val msg = ctrl.handle("picu:1", id2)
+        assertEquals("cards", msg.id)
+        val data = msg.data as String
+        // The message field should parse as valid JSON
+        val obj = com.google.gson.Gson().fromJson(data, com.google.gson.JsonObject::class.java)
+        assertNotNull(obj)
+        val message = obj.get("message")?.asString ?: ""
+        assertTrue(message.contains("Picked from discard"))
+        // Ensure no raw brackets-with-quotes in the message
+        assertFalse(message.contains("\"["))
+    }
 }

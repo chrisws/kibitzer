@@ -48,6 +48,20 @@ class Deck {
         return result
     }
 
+    fun pickupFromDiscard(hand: Hand, count: Int): Hand {
+        val result = Hand()
+        repeat(count) {
+            if (discard.size > 0) {
+                val card = discard.pop()
+                result.add(card)
+                hand.add(card)
+            }
+        }
+        lastPlay = if (discard.size > 0) discard.peek() else null
+        lastSize = 0
+        return result
+    }
+
     fun putdown(hand: Hand) {
         discard.addAll(hand)
         lastPlay = discard.peek()

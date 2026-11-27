@@ -111,6 +111,7 @@ class GameViewModel(
         ctrl.handle("nicn:$nickname", humanSessionId)
         aiSessionIds.forEachIndexed { i, sid ->
             ctrl.handle("join:${i + 1}", sid)
+            ctrl.handle("nicn:${aiPlayers[i].name}", sid)
         }
 
         // Shuffle and deal
@@ -130,6 +131,8 @@ class GameViewModel(
         }
 
         // Update state
+        val gameName = game.name.replace("_", " ")
+        val greeting = "I'm your game companion! Ask me anything about $gameName. The rules are ${game.description}."
         _state.value = _state.value.copy(
             gameMode = GameMode.AI,
             game = game,
@@ -137,11 +140,12 @@ class GameViewModel(
             connectionState = ConnectionState.CONNECTED,
             screen = Screen.GAME,
             players = playerList,
-            chatLog = listOf("${aiPlayers[0].name}: ${bots[0].greet()}")
+            chatLog = listOf("${aiPlayers[0].name}: $greeting")
         )
 
         // Sync state from controller
         syncStateFromController(dealMsg)
+        Log.d("GameVM", "startAiGame: AFTER sync - discardPile.size=${_state.value.discardPile.size}, myHand.size=${_state.value.myHand.size}")
 
         // If it's an AI's turn, let it play
         if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
@@ -215,7 +219,12 @@ class GameViewModel(
         if (_state.value.gameMode == GameMode.AI) {
             val ctrl = controller ?: return
             val msg = ctrl.handle("picu:$count", humanSessionId)
+            if (msg.id == "message") {
+                aiSay(msg.data as? String ?: "Something went wrong.")
+                return
+            }
             syncStateFromController(msg)
+            aiSay("Picked up $count card${if (count > 1) "s" else ""}.")
             if (aiSessionIds.contains(_state.value.currentTurn) && !_state.value.isGameOver) {
                 viewModelScope.launch { aiTurn() }
             }
@@ -235,12 +244,13 @@ class GameViewModel(
             if (msg.id == "message") {
                 val room = ctrl.rooms[0]
                 val myHand = ctrl.findSession(humanSessionId)?.hand ?: Hand()
+                val reason = room.rules.invalidReason(room.deck, hand)
                 val validCards = room.rules.findValidCards(room.deck, myHand)
                 val hint = if (validCards.isNotEmpty()) {
                     val names = validCards.joinToString(", ") { it.code }
-                    "Not valid. Try: $names"
+                    "$reason — try: $names"
                 } else {
-                    "No valid plays. Pick up a card."
+                    "$reason — no valid plays, pick up a card."
                 }
                 _state.value = _state.value.copy(message = hint)
                 aiSay(hint)
@@ -371,6 +381,13 @@ class GameViewModel(
             msg = ctrl.handle(command, currentTurn)
         }
 
+        // If pickup also failed, skip the turn to avoid getting stuck
+        if (msg.id == "message") {
+            Log.d("GameVM", "aiTurn: all actions failed, skipping turn")
+            aiSay("${ai.name} skipped their turn.")
+            msg = ctrl.handle("skip:", currentTurn)
+        }
+
         syncStateFromController(msg)
 
         // Narrate what happened
@@ -403,6 +420,7 @@ class GameViewModel(
         val newHand = controller?.findSession(humanSessionId)?.hand?.toList()
             ?: parseCardList(obj, "hand")
         val newPile = parseCardList(obj, "pile")
+        Log.d("GameVM", "syncState: newHand.size=${newHand.size}, newPile.size=${newPile.size}")
         val turn = obj.get("turn")?.asInt ?: -1
         val rawMessage = obj.get("message")?.asString ?: ""
         val message = if (rawMessage == "cards dealt") "" else rawMessage
@@ -429,7 +447,7 @@ class GameViewModel(
             faceDown = faceDown,
             game = game,
             players = updatedPlayers,
-            isGameOver = newHand.isEmpty() && turn == -1
+            isGameOver = turn == -1
         )
     }
 
@@ -458,7 +476,7 @@ class GameViewModel(
                 faceDown = faceDown,
                 game = game,
                 mySessionId = sessionId,
-                isGameOver = newHand.isEmpty() && turn == -1
+                isGameOver = turn == -1
             )
         } catch (e: Exception) {
             _state.value = _state.value.copy(message = "Parse error: ${e.message}")

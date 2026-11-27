@@ -261,6 +261,15 @@ class Controller(private val numRooms: Int = 1) {
             room.saveState(player)
             setNextTurn(player.room, message)
             return cardsMessage(player, player.room, message.toString())
+        } else if (deck.discardSize > 0) {
+            val n = count.trim().toIntOrNull() ?: 1
+            val available = minOf(n, deck.discardSize)
+            val picked = deck.pickupFromDiscard(player.hand, available)
+            val message = StringBuilder("Picked from discard: $picked")
+            player.hand.sort(rules.getRank())
+            room.saveState(player)
+            setNextTurn(player.room, message)
+            return cardsMessage(player, player.room, message.toString())
         }
         return Message("message", "nothing to pickup!")
     }
@@ -381,6 +390,7 @@ class Controller(private val numRooms: Int = 1) {
         val room = rooms[player.room]
         val message = StringBuilder("${player.name()} won the round! Score:")
         player.points++
+        room.turn = -1
 
         for (p in players) {
             if (p.room == player.room) {

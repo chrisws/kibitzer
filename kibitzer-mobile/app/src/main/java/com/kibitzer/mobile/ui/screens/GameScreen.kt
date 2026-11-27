@@ -63,7 +63,7 @@ fun GameScreen(
         }
 
         // Multi-line chat preview (clickable to open full chat)
-        val recentChat = state.chatLog.takeLast(4)
+        val recentChat = state.chatLog.takeLast(6)
         if (recentChat.isNotEmpty()) {
             Text(
                 text = recentChat.joinToString("\n"),
@@ -85,15 +85,25 @@ fun GameScreen(
         ) {
             // Opponent hands (face down)
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 state.players
                     .filter { it.sessionId != state.mySessionId && it.active }
                     .forEach { player ->
-                        DeckView(
-                            count = player.handSize,
-                            faceDown = state.faceDown
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = player.nickname,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            DeckView(
+                                count = player.handSize,
+                                faceDown = state.faceDown
+                            )
+                        }
                     }
             }
 
@@ -109,6 +119,11 @@ fun GameScreen(
         }
 
         // My hand
+        Text(
+            text = "${state.myHand.size} card${if (state.myHand.size != 1) "s" else ""}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         HandRow(
             cards = state.myHand,
             faceDown = false,

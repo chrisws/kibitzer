@@ -14,4 +14,5 @@ abstract class Rules {
     abstract fun url(): String
     abstract fun noPlayTakesDiscard(): Boolean
     abstract fun setNextTurn(hand: Hand): Boolean
+    open fun invalidReason(deck: Deck, hand: Hand): String = "Not a valid play"
 }

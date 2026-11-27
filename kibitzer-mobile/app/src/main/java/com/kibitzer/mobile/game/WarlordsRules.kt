@@ -66,6 +66,40 @@ class WarlordsRules : Rules() {
 
     override fun isWinningPlay(deck: Deck, hand: Hand): Boolean = hand.size == 0
 
+    override fun invalidReason(deck: Deck, hand: Hand): String {
+        if (hand.size == 0) return "You have no cards to play"
+        if (!hand.isEqual(hand.peek(), ::rank32)) {
+            return "All cards must be the same rank"
+        }
+        if (deck.discardSize == 0) return "Should be valid on an empty discard"
+        val last = deck.lastPlay ?: return "Should be valid"
+        if (rank32(last) == rank32(Card.TWO_CLUBS)) return "2s are always valid"
+        if (hand.size != deck.lastSize) {
+            return "You must play ${deck.lastSize} card${if (deck.lastSize != 1) "s" else ""} (last play was ${deck.lastSize})"
+        }
+        if (!hand.hasHigher(last, 1, ::rank32)) {
+            return "Your rank is not high enough to beat ${rankName(last)}"
+        }
+        return "Not a valid play"
+    }
+
+    private fun rankName(card: Card): String = when (card.rank) {
+        2 -> "2s"
+        3 -> "3s"
+        4 -> "4s"
+        5 -> "5s"
+        6 -> "6s"
+        7 -> "7s"
+        8 -> "8s"
+        9 -> "9s"
+        10 -> "10s"
+        11 -> "Jacks"
+        12 -> "Queens"
+        13 -> "Kings"
+        14 -> "Aces"
+        else -> "?"
+    }
+
     override fun name(): String = "Warlords and Scumbags"
 
     override fun url(): String = "https://en.wikipedia.org/wiki/President_(card_game)"
