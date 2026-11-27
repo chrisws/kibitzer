@@ -171,15 +171,23 @@ fun GameScreen(
             selectedCards = emptySet()
           }
         },
-        enabled = selectedCards.isNotEmpty(),
+        enabled = selectedCards.isNotEmpty() && !state.isGameOver,
         modifier = Modifier.weight(1f),
       ) {
         Text("Play ${selectedCards.size}")
       }
-      Button(onClick = { viewModel.pickup() }, modifier = Modifier.weight(1f)) {
+      Button(
+        onClick = { viewModel.pickup() },
+        enabled = !state.isGameOver,
+        modifier = Modifier.weight(1f),
+      ) {
         Text("Pick Up")
       }
-      Button(onClick = { viewModel.skip() }, modifier = Modifier.weight(1f)) {
+      Button(
+        onClick = { viewModel.skip() },
+        enabled = !state.isGameOver,
+        modifier = Modifier.weight(1f),
+      ) {
         Text("Skip")
       }
     }

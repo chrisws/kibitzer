@@ -171,6 +171,32 @@ class AiPlayerTest {
   }
 
   @Test
+  fun `warlords AI survives many random games without crashing`() {
+    // Stress test: run 50 random warlords games to ensure the AI
+    // never throws (e.g. NoSuchElementException on empty hand)
+    repeat(50) { i ->
+      val controller = Controller()
+      val id1 = controller.createSession()
+      val id2 = controller.createSession()
+      controller.handle("join:0", id1)
+      controller.handle("join:1", id2)
+      controller.handle("shuf:", id1)
+      controller.handle("deal:", id1)
+
+      val ai = AiPlayer(seed = i.toLong())
+      var steps = 0
+      while (steps < 100) {
+        val turn = controller.rooms[0].turn
+        if (turn == -1) break
+        val cmd = ai.decide(controller, turn)
+        val msg = controller.handle(cmd, turn)
+        if (msg.id == "gameover") break
+        steps++
+      }
+    }
+  }
+
+  @Test
   fun `warlords AI does not loop on invalid play`() {
     val controller = Controller()
     val id1 = controller.createSession()

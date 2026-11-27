@@ -19,6 +19,10 @@
 
 package com.kibitzer.mobile.ui.screens
 
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,8 +36,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kibitzer.mobile.model.GameViewModel
 
@@ -44,6 +52,16 @@ fun GameOverScreen(
   onHome: () -> Unit,
 ) {
   val state by viewModel.state.collectAsState()
+
+  // Pulse animation for the trophy
+  val transition = rememberInfiniteTransition()
+  val pulse by transition.animateFloat(
+    initialValue = 1f,
+    targetValue = 1.2f,
+    animationSpec = infiniteRepeatable(
+      animation = tween(800),
+    ),
+  )
 
   Column(
     modifier =
@@ -60,14 +78,22 @@ fun GameOverScreen(
     Spacer(modifier = Modifier.height(16.dp))
     if (state.winner.isNotEmpty()) {
       Text(
+        text = "🏆",
+        style = MaterialTheme.typography.displayLarge,
+        modifier = Modifier.scale(pulse),
+      )
+      Spacer(modifier = Modifier.height(8.dp))
+      Text(
         text = "${state.winner} wins!",
         style = MaterialTheme.typography.headlineLarge,
+        color = Color(0xFFFFC107),
       )
     }
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(16.dp))
     Text(
       text = state.message,
       style = MaterialTheme.typography.bodyLarge,
+      textAlign = TextAlign.Center,
     )
     Spacer(modifier = Modifier.height(48.dp))
     Button(onClick = onPlayAgain) {

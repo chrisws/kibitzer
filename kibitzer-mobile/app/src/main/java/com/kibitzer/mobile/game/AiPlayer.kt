@@ -123,8 +123,9 @@ class AiPlayer(
           Hand().apply { cards.take(neededSize).forEach { add(it) } }
         }
 
-    if (validPlays.isNotEmpty()) {
-      val play = validPlays.minBy { rank32(it.toList().first()) }
+    val nonEmptyPlays = validPlays.filter { it.size > 0 }
+    if (nonEmptyPlays.isNotEmpty()) {
+      val play = nonEmptyPlays.minBy { rank32(it.toList().first()) }
       return "putd:${play.toJson()}"
     }
 

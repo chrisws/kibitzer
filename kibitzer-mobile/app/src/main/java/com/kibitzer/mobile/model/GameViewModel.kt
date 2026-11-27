@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
 import com.kibitzer.mobile.game.AiPlayer
 import com.kibitzer.mobile.game.Card
 import com.kibitzer.mobile.game.ChatBot
@@ -444,7 +445,14 @@ class GameViewModel(
       return
     }
     val data = msg.data as? String ?: return
-    val obj = gson.fromJson(data, JsonObject::class.java) ?: return
+    val obj: JsonObject? =
+      try {
+        gson.fromJson(data, JsonObject::class.java)
+      } catch (e: JsonSyntaxException) {
+        Log.e("GameVM", "syncStateFromController: malformed JSON: ${e.message}")
+        null
+      }
+    if (obj == null) return
     Log.d("GameVM", "syncStateFromController: parsed obj=$obj")
 
     // Always read the human player's hand from the controller,
@@ -478,6 +486,15 @@ class GameViewModel(
         }
       }
 
+    val isOver = turn == -1
+    val winner =
+      if (isOver) {
+        // Extract winner name from "(Name) won the round! Score:..."
+        val raw = message.substringBefore(" won the round!").ifBlank { "" }
+        raw.removeSurrounding("(", ")")
+      } else {
+        ""
+      }
     _state.value =
       _state.value.copy(
         myHand = newHand,
@@ -487,7 +504,8 @@ class GameViewModel(
         faceDown = faceDown,
         game = game,
         players = updatedPlayers,
-        isGameOver = turn == -1,
+        isGameOver = isOver,
+        winner = winner,
       )
   }
 

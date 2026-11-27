@@ -131,24 +131,24 @@ class WarlordsRulesTest {
   }
 
   @Test
-  fun `findValidCards filters to matching ranks`() {
+  fun `findValidCards filters to higher ranks only`() {
     val deck = Deck()
     deck.putdown(Hand().apply { add(Card.FIVE_CLUBS) })
     val hand =
       Hand().apply {
-        add(Card.FOUR_HEARTS) // rank 4 = 5-1, valid
-        add(Card.FIVE_SPADES) // rank 5 = match, valid
-        add(Card.SIX_DIAMONDS) // rank 6 = 5+1, valid
+        add(Card.FOUR_HEARTS) // rank 4 < 5, NOT valid
+        add(Card.FIVE_SPADES) // rank 5 = same, NOT valid
+        add(Card.SIX_DIAMONDS) // rank 6 > 5, valid
         add(Card.TWO_CLUBS) // 2s always valid
-        add(Card.TEN_HEARTS) // rank 10, not valid
+        add(Card.TEN_HEARTS) // rank 10 > 5, valid
       }
     val valid = rules.findValidCards(deck, hand)
-    assertEquals(4, valid.size)
-    assertTrue(valid.contains(Card.FOUR_HEARTS))
-    assertTrue(valid.contains(Card.FIVE_SPADES))
+    assertEquals(3, valid.size)
+    assertFalse(valid.contains(Card.FOUR_HEARTS))
+    assertFalse(valid.contains(Card.FIVE_SPADES))
     assertTrue(valid.contains(Card.SIX_DIAMONDS))
     assertTrue(valid.contains(Card.TWO_CLUBS))
-    assertFalse(valid.contains(Card.TEN_HEARTS))
+    assertTrue(valid.contains(Card.TEN_HEARTS))
   }
 
   @Test

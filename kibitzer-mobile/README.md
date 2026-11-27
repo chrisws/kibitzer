@@ -1,5 +1,8 @@
 # Kibitzer Mobile
 
+![made with hali](.hali/badge.svg)
+![unit tests](.hali/test_badge.svg)
+
 Android card game playable over Bluetooth Low Energy (BLE).
 Ported from the [kibitzer](../) web-based card game.
 

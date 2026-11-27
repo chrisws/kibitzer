@@ -307,7 +307,15 @@ class Controller(
     val rules = room.rules
     val deck = room.deck
 
-    if (deck.packSize > 0) {
+    if (rules.noPlayTakesDiscard() && deck.discardSize > 0) {
+      val picked = deck.discard.toList()
+      deck.takeDiscard(player.hand)
+      val message = StringBuilder("Picked up discard: $picked")
+      player.hand.sort(rules.getRank())
+      room.saveState(player)
+      setNextTurn(player.room, message)
+      return cardsMessage(player, player.room, message.toString())
+    } else if (deck.packSize > 0) {
       val n = count.trim().toIntOrNull() ?: 1
       val message = StringBuilder("Picked: ${deck.pickup(player.hand, n)}")
       player.hand.sort(rules.getRank())
@@ -482,7 +490,7 @@ class Controller(
         }
         p.hand.clear()
         message
-          .append("<br/>")
+          .append("\n")
           .append(p.name())
           .append(": ")
           .append(p.points)
@@ -533,9 +541,10 @@ class Controller(
     message: String,
   ): Message {
     val roomObj = rooms[room]
+    val escapedMessage = message.replace("\\", "\\\\").replace("\n", "\\n").replace("\"", "\\\"")
     val sb = StringBuilder("{")
     sb.append("\"pile\":").append(roomObj.deck.getDiscardJson())
-    sb.append(",\"message\":\"").append(message).append("\"")
+    sb.append(",\"message\":\"").append(escapedMessage).append("\"")
     sb.append(",\"turn\":").append(roomObj.turn)
     sb.append(",\"faceDown\":").append(roomObj.rules.faceDown())
     sb.append(",\"game\":\"").append(roomObj.rules.name()).append("\"")

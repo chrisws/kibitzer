@@ -25,7 +25,7 @@ enum class Game(
   val maxPlayers: Int = 6,
 ) {
   WARLORDS(
-    "Classic sequence game. Play matching ranks from 3\u2663 up to 2\u2663 (J, Q, K, A are valid). Four of a kind clears the pile.",
+    "Play the same number of cards as the last play, one rank higher (3 through A). 2s are wild. Four of a kind clears the pile.",
     2,
     6,
   ),

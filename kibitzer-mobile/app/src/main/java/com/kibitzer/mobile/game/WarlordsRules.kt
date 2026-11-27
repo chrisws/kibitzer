@@ -89,7 +89,7 @@ class WarlordsRules : Rules() {
     if (lastRank == rank32(Card.TWO_CLUBS)) return hand.toList()
     return hand.toList().filter { card ->
       val r = rank32(card)
-      r == rank32(Card.TWO_CLUBS) || r == lastRank || r == lastRank + 1 || r == lastRank - 1
+      r == rank32(Card.TWO_CLUBS) || r > lastRank
     }
   }
 
