@@ -20,10 +20,11 @@
 package com.kibitzer.mobile
 
 import android.app.Application
+import com.kibitzer.mobile.model.SettingsManager
 
 class KibitzerApp : Application() {
   override fun onCreate() {
     super.onCreate()
-    // Application-level initialization
+    SettingsManager.init(this)
   }
 }

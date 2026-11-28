@@ -39,6 +39,7 @@ fun HomeScreen(
   onPlayWithFriends: () -> Unit,
   onPlayWithAi: () -> Unit,
   onHelp: () -> Unit,
+  onSettings: () -> Unit,
 ) {
   Column(
     modifier =
@@ -68,6 +69,10 @@ fun HomeScreen(
     Spacer(modifier = Modifier.height(16.dp))
     Button(onClick = onHelp, modifier = Modifier.fillMaxWidth()) {
       Text("Help")
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = onSettings, modifier = Modifier.fillMaxWidth()) {
+      Text("Settings")
     }
   }
 }

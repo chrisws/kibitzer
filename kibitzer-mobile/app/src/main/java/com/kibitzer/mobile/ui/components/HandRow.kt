@@ -22,8 +22,6 @@ package com.kibitzer.mobile.ui.components
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -41,30 +39,32 @@ fun HandRow(
   faceDown: Boolean = false,
   selectedCards: Set<Card>,
   onCardClick: (Card) -> Unit,
+  compact: Boolean = false,
   modifier: Modifier = Modifier,
 ) {
-  Row(
+  OverlappingCardRow(
+    overlap = if (compact) 40.dp else 0.dp,
+    spacing = if (compact) 0.dp else 4.dp,
+    cardWidth = 72.dp,
     modifier =
       modifier
         .fillMaxWidth()
         .horizontalScroll(rememberScrollState())
         .padding(horizontal = 8.dp, vertical = 4.dp),
-    horizontalArrangement = Arrangement.spacedBy(4.dp),
-  ) {
-    cards.forEach { card ->
-      val isSelected = card in selectedCards
-      CardView(
-        card = card,
-        faceDown = faceDown,
-        modifier =
-          Modifier
-            .size(width = 72.dp, height = 100.dp)
-            .offset(y = if (isSelected) (-6).dp else 0.dp)
-            .border(
-              width = if (isSelected) 2.dp else 0.dp,
-              color = if (isSelected) Color.Blue else Color.Transparent,
-            ).clickable { onCardClick(card) },
-      )
-    }
+    items = cards,
+  ) { itemModifier, card ->
+    val isSelected = card in selectedCards
+    CardView(
+      card = card,
+      faceDown = faceDown,
+      modifier =
+        itemModifier
+          .size(width = 72.dp, height = 100.dp)
+          .offset(y = if (isSelected) (-6).dp else 0.dp)
+          .border(
+            width = if (isSelected) 2.dp else 0.dp,
+            color = if (isSelected) Color.Blue else Color.Transparent,
+          ).clickable { onCardClick(card) },
+    )
   }
 }

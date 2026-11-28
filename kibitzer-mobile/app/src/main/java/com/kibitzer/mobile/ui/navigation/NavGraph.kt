@@ -36,6 +36,7 @@ import com.kibitzer.mobile.ui.screens.GameScreen
 import com.kibitzer.mobile.ui.screens.HelpScreen
 import com.kibitzer.mobile.ui.screens.HomeScreen
 import com.kibitzer.mobile.ui.screens.LobbyScreen
+import com.kibitzer.mobile.ui.screens.SettingsScreen
 
 object Routes {
   const val HOME = "home"
@@ -48,6 +49,7 @@ object Routes {
   const val GAME_RULES = "game_rules"
   const val ABOUT = "about"
   const val CHAT = "chat"
+  const val SETTINGS = "settings"
 }
 
 @Composable
@@ -64,6 +66,7 @@ fun NavGraph(viewModel: GameViewModel) {
         onPlayWithFriends = { navController.navigate(Routes.LOBBY) },
         onPlayWithAi = { navController.navigate(Routes.AI_LOBBY) },
         onHelp = { navController.navigate(Routes.HELP) },
+        onSettings = { navController.navigate(Routes.SETTINGS) },
       )
     }
     composable(Routes.AI_LOBBY) {
@@ -121,6 +124,11 @@ fun NavGraph(viewModel: GameViewModel) {
     composable(Routes.CHAT) {
       ChatScreen(
         viewModel = viewModel,
+        onBack = { navController.popBackStack() },
+      )
+    }
+    composable(Routes.SETTINGS) {
+      SettingsScreen(
         onBack = { navController.popBackStack() },
       )
     }

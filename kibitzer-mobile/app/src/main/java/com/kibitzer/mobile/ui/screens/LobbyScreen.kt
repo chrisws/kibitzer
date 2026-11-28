@@ -36,7 +36,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,7 +60,6 @@ fun LobbyScreen(
   onGameStart: () -> Unit,
 ) {
   val state by viewModel.state.collectAsState()
-  var nickname by remember { mutableStateOf("") }
 
   LaunchedEffect(Unit) {
     viewModel.connect()
@@ -134,20 +132,6 @@ fun LobbyScreen(
     // --- Host new game ---
     OutlinedButton(onClick = { viewModel.hostGame() }, modifier = Modifier.fillMaxWidth()) {
       Text("Host New Game")
-    }
-
-    // --- Nickname ---
-    OutlinedTextField(
-      value = nickname,
-      onValueChange = { nickname = it },
-      label = { Text("Nickname") },
-      modifier = Modifier.fillMaxWidth(),
-    )
-
-    if (nickname.isNotBlank()) {
-      Button(onClick = { viewModel.setNickname(nickname) }) {
-        Text("Set Name")
-      }
     }
 
     // --- Game type ---

@@ -37,7 +37,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.kibitzer.mobile.game.AiPlayer
 import com.kibitzer.mobile.game.Game
 import com.kibitzer.mobile.model.GameViewModel
+import com.kibitzer.mobile.model.SettingsManager
 import com.kibitzer.mobile.ui.components.GameDetailsCard
 
 @Composable
@@ -60,18 +60,9 @@ fun AiLobbyScreen(
   onBack: () -> Unit,
   onGameStart: () -> Unit,
 ) {
-  val context = androidx.compose.ui.platform.LocalContext.current
   val state by viewModel.state.collectAsState()
   var numAiPlayers by remember { mutableStateOf(1) }
   var difficulty by remember { mutableStateOf(AiPlayer.Difficulty.MEDIUM) }
-  var nickname by remember {
-    mutableStateOf(
-      android.provider.Settings.Global.getString(
-        context.contentResolver,
-        "device_name",
-      ) ?: "",
-    )
-  }
 
   Column(
     modifier =
@@ -160,15 +151,6 @@ fun AiLobbyScreen(
       }
     }
 
-    // --- Nickname ---
-    OutlinedTextField(
-      value = nickname,
-      onValueChange = { nickname = it },
-      label = { Text("Your Name") },
-      placeholder = { Text("You") },
-      modifier = Modifier.fillMaxWidth(),
-    )
-
     // --- Player list preview ---
     Text(
       text = "Players",
@@ -197,7 +179,7 @@ fun AiLobbyScreen(
           )
           Spacer(modifier = Modifier.width(8.dp))
           Text(
-            text = nickname.ifBlank { "You" },
+            text = SettingsManager.nickname.ifBlank { "You" },
             style = MaterialTheme.typography.bodyLarge,
           )
         }
@@ -234,7 +216,7 @@ fun AiLobbyScreen(
             state.game,
             numAiPlayers,
             difficulty,
-            nickname.ifBlank { "You" },
+            SettingsManager.nickname.ifBlank { "You" },
           )
           onGameStart()
         },

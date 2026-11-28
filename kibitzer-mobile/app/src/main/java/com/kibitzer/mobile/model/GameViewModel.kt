@@ -392,12 +392,20 @@ class GameViewModel(
 
   // --- Internal handlers ---
 
+  private var isAiTurnActive = false
+
   private suspend fun aiTurn(depth: Int = 0) {
     if (depth > 20) {
       Log.w("GameVM", "aiTurn: max depth reached, stopping")
       return
     }
-    delay(1500)
+    if (isAiTurnActive) {
+      Log.w("GameVM", "aiTurn: already active, skipping")
+      return
+    }
+    isAiTurnActive = true
+    try {
+      delay(1500)
     val ctrl = controller ?: return
     val currentTurn = _state.value.currentTurn
     val aiIndex = aiSessionIds.indexOf(currentTurn)
@@ -435,6 +443,9 @@ class GameViewModel(
       aiTurn(depth + 1)
     } else if (newTurn == humanSessionId && !_state.value.isGameOver) {
       aiSay("Your turn!")
+    }
+    } finally {
+      isAiTurnActive = false
     }
   }
 

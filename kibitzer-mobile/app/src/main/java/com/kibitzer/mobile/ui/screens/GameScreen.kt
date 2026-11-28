@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kibitzer.mobile.game.Card
 import com.kibitzer.mobile.model.GameViewModel
+import com.kibitzer.mobile.model.SettingsManager
 import com.kibitzer.mobile.ui.components.DeckView
 import com.kibitzer.mobile.ui.components.HandRow
 import com.kibitzer.mobile.ui.components.PileView
@@ -134,6 +135,7 @@ fun GameScreen(
       PileView(
         cards = state.discardPile,
         faceDown = state.faceDown,
+        compact = SettingsManager.compactCards,
       )
 
       Spacer(modifier = Modifier.height(16.dp))
@@ -149,6 +151,7 @@ fun GameScreen(
       cards = state.myHand,
       faceDown = false,
       selectedCards = selectedCards,
+      compact = SettingsManager.compactCards,
       onCardClick = { card ->
         selectedCards =
           if (card in selectedCards) {
