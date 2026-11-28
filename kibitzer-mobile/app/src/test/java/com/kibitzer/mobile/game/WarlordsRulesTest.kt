@@ -219,4 +219,144 @@ class WarlordsRulesTest {
     val hand = Hand().apply { add(Card.FIVE_CLUBS) }
     assertEquals("Should be valid on an empty discard", rules.invalidReason(deck, hand))
   }
+
+  // --- Bug fix: clearDiscard only on exact 3C or 10C ---
+
+  @Test
+  fun `clearDiscard on 3 of diamonds should NOT clear`() {
+    val hand = Hand().apply { add(Card.THREE_DIAMONDS) }
+    assertFalse(rules.clearDiscard(hand))
+  }
+
+  @Test
+  fun `clearDiscard on 3 of hearts should NOT clear`() {
+    val hand = Hand().apply { add(Card.THREE_HEARTS) }
+    assertFalse(rules.clearDiscard(hand))
+  }
+
+  @Test
+  fun `clearDiscard on 10 of hearts should NOT clear`() {
+    val hand = Hand().apply { add(Card.TEN_HEARTS) }
+    assertFalse(rules.clearDiscard(hand))
+  }
+
+  @Test
+  fun `clearDiscard on 10 of spades should NOT clear`() {
+    val hand = Hand().apply { add(Card.TEN_SPADES) }
+    assertFalse(rules.clearDiscard(hand))
+  }
+
+  @Test
+  fun `clearDiscard on 3 of clubs should clear`() {
+    val hand = Hand().apply { add(Card.THREE_CLUBS) }
+    assertTrue(rules.clearDiscard(hand))
+  }
+
+  @Test
+  fun `clearDiscard on 10 of clubs should clear`() {
+    val hand = Hand().apply { add(Card.TEN_CLUBS) }
+    assertTrue(rules.clearDiscard(hand))
+  }
+
+  // --- Bug fix: isValidPlay count check when last was 2s ---
+
+  @Test
+  fun `isValidPlay rejects wrong count when last was 2s`() {
+    val deck = Deck()
+    deck.shuffle()
+    val played =
+      Hand().apply {
+        add(Card.TWO_CLUBS)
+        add(Card.TWO_DIAMONDS)
+      }
+    deck.putdown(played)
+    // Last play was 2 cards of 2s; playing 1 card should be rejected
+    val hand = Hand().apply { add(Card.FIVE_CLUBS) }
+    assertFalse(rules.isValidPlay(deck, hand))
+  }
+
+  @Test
+  fun `isValidPlay accepts correct count when last was 2s`() {
+    val deck = Deck()
+    deck.shuffle()
+    val played =
+      Hand().apply {
+        add(Card.TWO_CLUBS)
+        add(Card.TWO_DIAMONDS)
+      }
+    deck.putdown(played)
+    // Last play was 2 cards of 2s; playing 2 cards of same rank should be accepted
+    val hand =
+      Hand().apply {
+        add(Card.FIVE_CLUBS)
+        add(Card.FIVE_HEARTS)
+      }
+    assertTrue(rules.isValidPlay(deck, hand))
+  }
+
+  // --- Bug fix: canPlay count check when last was 2s ---
+
+  @Test
+  fun `canPlay false when last was 2s and no matching count`() {
+    val deck = Deck()
+    deck.shuffle()
+    val played =
+      Hand().apply {
+        add(Card.TWO_CLUBS)
+        add(Card.TWO_DIAMONDS)
+        add(Card.TWO_HEARTS)
+      }
+    deck.putdown(played)
+    // Last play was 3 cards; hand has only 2 of same rank
+    val hand =
+      Hand().apply {
+        add(Card.FIVE_CLUBS)
+        add(Card.FIVE_HEARTS)
+      }
+    assertFalse(rules.canPlay(deck, hand))
+  }
+
+  @Test
+  fun `canPlay true when last was 2s and matching count exists`() {
+    val deck = Deck()
+    deck.shuffle()
+    val played =
+      Hand().apply {
+        add(Card.TWO_CLUBS)
+        add(Card.TWO_DIAMONDS)
+      }
+    deck.putdown(played)
+    // Last play was 2 cards; hand has 2 of same rank
+    val hand =
+      Hand().apply {
+        add(Card.FIVE_CLUBS)
+        add(Card.FIVE_HEARTS)
+      }
+    assertTrue(rules.canPlay(deck, hand))
+  }
+
+  // --- Bug fix: invalidReason for 2s-last-play scenario ---
+
+  @Test
+  fun `invalidReason for non-2s when last was 2s mentions count`() {
+    val deck = Deck()
+    deck.shuffle()
+    val played =
+      Hand().apply {
+        add(Card.TWO_CLUBS)
+        add(Card.TWO_DIAMONDS)
+      }
+    deck.putdown(played)
+    val hand = Hand().apply { add(Card.FIVE_CLUBS) }
+    assertEquals("You must play 2 cards (last play was 2s)", rules.invalidReason(deck, hand))
+  }
+
+  @Test
+  fun `invalidReason for 2s hand says 2s are always valid`() {
+    val deck = Deck()
+    deck.shuffle()
+    deck.putdown(Hand().apply { add(Card.FIVE_CLUBS) })
+    val hand = Hand().apply { add(Card.TWO_CLUBS) }
+    assertEquals("2s are always valid", rules.invalidReason(deck, hand))
+  }
 }

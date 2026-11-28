@@ -28,15 +28,18 @@ class WarlordsRules : Rules() {
     if (hand.hasEqual(Card.TWO_CLUBS, ::rank32)) return true
     if (deck.discardSize == 0) return true
     val last = deck.lastPlay ?: return true
-    if (rank32(last) == rank32(Card.TWO_CLUBS)) return true
+    if (rank32(last) == rank32(Card.TWO_CLUBS)) {
+      val counts = hand.toList().groupBy { rank32(it) }
+      return counts.values.any { it.size >= deck.lastSize }
+    }
     return hand.hasHigher(last, deck.lastSize, ::rank32)
   }
 
   override fun canRevoke(): Boolean = false
 
   override fun clearDiscard(hand: Hand): Boolean =
-    hand.hasEqual(Card.THREE_CLUBS, ::rank32) ||
-      hand.hasEqual(Card.TEN_CLUBS, ::rank32) ||
+    hand.has(Card.THREE_CLUBS) ||
+      hand.has(Card.TEN_CLUBS) ||
       hand.size == 4
 
   override fun faceDown(): Boolean = false
@@ -67,8 +70,8 @@ class WarlordsRules : Rules() {
     }
     val last = deck.lastPlay ?: return true
     if (rank32(last) == rank32(Card.TWO_CLUBS)) {
-      android.util.Log.d("Play", "Warlords.isValidPlay: ACCEPT - last was 2s")
-      return true
+      android.util.Log.d("Play", "Warlords.isValidPlay: last was 2s, checking count: ${hand.size}==${deck.lastSize}")
+      return hand.size == deck.lastSize
     }
     val rankOk = hand.hasHigher(last, 1, ::rank32)
     val sizeOk = hand.size == deck.lastSize
@@ -108,7 +111,10 @@ class WarlordsRules : Rules() {
     }
     if (deck.discardSize == 0) return "Should be valid on an empty discard"
     val last = deck.lastPlay ?: return "Should be valid"
-    if (rank32(last) == rank32(Card.TWO_CLUBS)) return "2s are always valid"
+    if (hand.hasEqual(Card.TWO_CLUBS, ::rank32)) return "2s are always valid"
+    if (rank32(last) == rank32(Card.TWO_CLUBS)) {
+      return "You must play ${deck.lastSize} card${if (deck.lastSize != 1) "s" else ""} (last play was 2s)"
+    }
     if (hand.size != deck.lastSize) {
       return "You must play ${deck.lastSize} card${if (deck.lastSize != 1) "s" else ""} (last play was ${deck.lastSize})"
     }
